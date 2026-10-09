@@ -1,0 +1,46 @@
+feature,area,priority,original,clone,notes
+Horizontal run with variable speed,movement,must,yes,yes,Cap walk/run
+Variable-height jump,movement,must,yes,yes,jump cut + coyote/buffer + SFX
+Right-only camera scroll,camera,must,yes,yes,right_camera + shake
+Stomp defeats Walker-type enemies,combat,must,yes,yes,Browncap
+Shell stun then kick,combat,must,yes,yes,Shellbug
+Pit falls cost a life,hazards,must,yes,yes,
+Timer per stage; time out costs a life,hazards,must,yes,yes,
+Grow power: taller form survives one hit,power-ups,must,yes,yes,Big Berry
+Tall form can break empty bricks from below,power-ups,must,yes,yes,BreakableBrick
+Fire power: projectile attack,power-ups,must,yes,yes,Ember Bloom + EmberShot
+Invuln star: timed contact defeat,power-ups,must,yes,yes,Spark Star
+Question and brick blocks; bump from below,blocks,must,yes,yes,QuestionBlock
+Hidden blocks revealed when bumped,blocks,must,yes,yes,HiddenBlock
+Coins and 100-coin extra life,collectibles,must,yes,yes,
+1-Up pickup grants a life,collectibles,must,yes,yes,OneUpBerry
+Lives counter; death restarts stage fanfare,lives,must,yes,yes,
+Game over at zero lives,lives,must,yes,yes,
+Multi-world multi-stage campaign,levels,must,yes,yes,Worlds 1-2 (4 stages each)
+Stage clear via end goal (flag-style),levels,must,yes,yes,GoalFlag + tally
+Castle stage with lava and fire-bar hazards,levels,must,yes,yes,
+CastleBoss encounter per world end,bosses,must,yes,yes,Duke Spikes both worlds
+Final world true boss vs earlier fakes,bosses,must,yes,yes,W1 impostor Duke; W2 final Duke (8 hits)
+HUD: score coins world-stage time,ui,must,yes,yes,
+Title screen and start,ui,must,yes,yes,PIPE HOP
+Pipe enter bonus / shortcut rooms,levels,should,yes,yes,
+Warp zones to later worlds,levels,should,yes,yes,1-1 warp to 2-1
+Underwater swim stages,levels,should,yes,yes,World 2-1 WaterZone
+Pause overlay,ui,should,yes,yes,
+Continue from current world after game over,lives,should,yes,yes,press C
+Hard quest unlock after first clear,meta,should,yes,yes,H on world clear/title
+Score and time-clear bonus tally,scoring,should,yes,yes,stage_clear.tscn
+Spring boards and moving platforms,levels,should,yes,yes,
+Winged ShellCrawler and advanced enemy set,combat,should,yes,yes,Winged Shellbug + CloudDropper
+HazardPlant in pipes,combat,should,yes,yes,
+Cloud spawner / spiked dropper patterns,combat,could,yes,yes,CloudDropper
+Hammer-thrower pairs,combat,could,yes,skip,cut for personal scope
+Beetle-like fireproof crawler,combat,could,yes,skip,cut for personal scope
+Vine to bonus area,levels,could,yes,skip,pipe bonus covers this fantasy
+Alternating two-player mode,multiplayer,could,yes,skip,out of user slice
+Nintendo character names and likenesses,ip,must,yes,skip,nintendo_ip
+Nintendo logos sprites and level art,ip,must,yes,skip,nintendo_ip
+Nintendo music and sound effects,ip,must,yes,skip,nintendo_ip; original beep SFX instead
+Nintendo product title in code UI or store listing,ip,must,yes,skip,nintendo_ip
+Byte-identical official level maps,ip,must,yes,skip,nintendo_ip
+NES ROM or binary port to macOS,ip,must,yes,skip,nintendo_ip
