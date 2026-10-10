@@ -15,7 +15,7 @@ var _active_world_item: Node = null
 func _ready() -> void:
 	_build_level()
 	Music.play_theme(_music_theme())
-	var spawn := Vector2(48, 304)
+	var spawn := Vector2(48, 320)
 	if RunState.use_pipe_spawn and RunState.pipe_return_pos != Vector2.ZERO:
 		spawn = RunState.pipe_return_pos
 		RunState.use_pipe_spawn = false

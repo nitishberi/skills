@@ -74,7 +74,7 @@ func _physics_process(delta: float) -> void:
 		RunState.invuln_timer = maxf(0.0, RunState.invuln_timer - delta)
 		modulate.a = 0.55 if int(RunState.invuln_timer * 20) % 2 == 0 else 1.0
 	else:
-		modulate.a = 1.0
+		modulate = Color.WHITE
 
 	if in_water:
 		velocity.y = minf(160.0, velocity.y + 220.0 * delta)
@@ -114,6 +114,9 @@ func _physics_process(delta: float) -> void:
 	if RunState.form == "fire" and Input.is_action_just_pressed("run") and shoot_cooldown <= 0.0:
 		_shoot_ember()
 
+	if is_on_floor():
+		velocity += get_platform_velocity()
+
 	move_and_slide()
 	_resolve_collisions()
 	_refresh_sprite(delta)
@@ -143,9 +146,11 @@ func _resolve_collisions() -> void:
 			continue
 		var normal := col.get_normal()
 		if normal.y > 0.5 and velocity.y < 0.0:
-			if collider.is_in_group("question_blocks") and collider.has_method("bump_from_below"):
-				collider.bump_from_below()
-			elif collider.is_in_group("breakable_bricks") and collider.has_method("bump_from_below"):
+			if collider.has_method("bump_from_below") and (
+				collider.is_in_group("question_blocks")
+				or collider.is_in_group("hidden_blocks")
+				or collider.is_in_group("breakable_bricks")
+			):
 				collider.bump_from_below()
 		if collider.is_in_group("enemies"):
 			_touch_enemy(collider, normal)

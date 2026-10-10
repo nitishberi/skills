@@ -6,6 +6,8 @@ Generated from `replica/recon.md` flows. Headless scene loads are automated; pla
 
 - Headless `--scene` smoke for title, all 8 stages, bonus, stage_clear, world_clear, game_over (2026-10-09): pass
 
+**Note:** automation only checks that scenes load. Gameplay rows below must be run manually in the editor or exported build (see `bugs.md` workflow).
+
 ## F01 Clear overworld stage
 
 | ID | case | expected |
