@@ -13,19 +13,18 @@ const Templates := preload("res://scripts/stage_templates.gd")
 var player: CapPlayer
 var _cleared: bool = false
 var _active_world_item: Node = null
-var _next_checkpoint_x: float = 280.0
 
 func _ready() -> void:
 	level_id = "%d-%d" % [RunState.world, RunState.stage]
 	_build_level()
 	Music.play_theme(_music_theme())
-	# Ground tile tops sit at y=320. Spawn feet slightly above so Cap drops onto the path.
+	# Always restart at the beginning of the stage (not death position).
+	# Pipe return from bonus rooms is the only mid-stage spawn exception.
 	var spawn := Vector2(64, 304)
 	if RunState.use_pipe_spawn and RunState.pipe_return_pos != Vector2.ZERO:
 		spawn = Vector2(RunState.pipe_return_pos.x, mini(RunState.pipe_return_pos.y, 304.0))
 		RunState.use_pipe_spawn = false
-	elif RunState.has_checkpoint:
-		spawn = Vector2(RunState.checkpoint_pos.x, 304)
+	RunState.clear_checkpoint()
 	player = _spawn_player(spawn)
 	player.died.connect(_on_player_died)
 	var camera := $Camera2D
@@ -39,10 +38,6 @@ func _process(delta: float) -> void:
 		return
 	RunState.tick_time(delta)
 	Music.set_hurry(RunState.time_left > 0.0 and RunState.time_left <= SmbTuning.TIMER_HURRY_BELOW)
-	if player and is_instance_valid(player):
-		if player.global_position.x >= _next_checkpoint_x:
-			RunState.set_checkpoint(Vector2(player.global_position.x, 320))
-			_next_checkpoint_x += 384.0
 	if RunState.time_left <= 0.0:
 		_on_player_died()
 
@@ -77,9 +72,10 @@ func _build_level() -> void:
 		_apply_hard_quest()
 
 func _build_ground(width_tiles: int, pit_ranges: Array = []) -> void:
+	var pits := _shrink_pits(pit_ranges)
 	for x in range(0, width_tiles):
 		var in_pit := false
-		for r in pit_ranges:
+		for r in pits:
 			if x >= r[0] and x <= r[1]:
 				in_pit = true
 				break
@@ -87,6 +83,17 @@ func _build_ground(width_tiles: int, pit_ranges: Array = []) -> void:
 			continue
 		_add_solid(Vector2(x * TILE, 320), Color("5a3d2b"))
 		_add_solid(Vector2(x * TILE, 336), Color("3e2723"))
+
+func _shrink_pits(pit_ranges: Array) -> Array:
+	# Shorten every gap by 20% (keep start tile, shrink length).
+	var out: Array = []
+	for r in pit_ranges:
+		var a: int = int(r[0])
+		var b: int = int(r[1])
+		var span: int = maxi(1, b - a + 1)
+		var new_span: int = maxi(1, int(round(float(span) * 0.8)))
+		out.append([a, a + new_span - 1])
+	return out
 
 func _build_level_1_1() -> void:
 	_build_ground(80, [[18, 21]])
@@ -403,58 +410,22 @@ func _spawn_world_item(item: Node) -> void:
 
 func _make_berry(pos: Vector2) -> BigBerry:
 	var berry := BigBerry.new()
-	berry.collision_layer = 8
-	berry.collision_mask = 2
-	var shape := CollisionShape2D.new()
-	var rect := RectangleShape2D.new()
-	rect.size = Vector2(12, 12)
-	shape.shape = rect
-	shape.position = Vector2(0, -6)
-	berry.add_child(shape)
 	berry.position = pos
-	berry.monitoring = true
 	return berry
 
 func _make_ember(pos: Vector2) -> EmberBloom:
 	var bloom := EmberBloom.new()
-	bloom.collision_layer = 8
-	bloom.collision_mask = 2
-	var shape := CollisionShape2D.new()
-	var rect := RectangleShape2D.new()
-	rect.size = Vector2(14, 14)
-	shape.shape = rect
-	shape.position = Vector2(0, -7)
-	bloom.add_child(shape)
 	bloom.position = pos
-	bloom.monitoring = true
 	return bloom
 
 func _make_spark(pos: Vector2) -> SparkStar:
 	var star := SparkStar.new()
-	star.collision_layer = 8
-	star.collision_mask = 2
-	var shape := CollisionShape2D.new()
-	var rect := RectangleShape2D.new()
-	rect.size = Vector2(12, 12)
-	shape.shape = rect
-	shape.position = Vector2(0, -6)
-	star.add_child(shape)
 	star.position = pos
-	star.monitoring = true
 	return star
 
 func _make_one_up(pos: Vector2) -> OneUpBerry:
 	var berry := OneUpBerry.new()
-	berry.collision_layer = 8
-	berry.collision_mask = 2
-	var shape := CollisionShape2D.new()
-	var rect := RectangleShape2D.new()
-	rect.size = Vector2(12, 12)
-	shape.shape = rect
-	shape.position = Vector2(0, -6)
-	berry.add_child(shape)
 	berry.position = pos
-	berry.monitoring = true
 	return berry
 
 func _add_pipe(pos: Vector2, enterable: bool = true) -> void:

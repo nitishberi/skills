@@ -22,6 +22,9 @@ Severity: **S1** crash/blocker, **S2** wrong rules/score/lives, **S3** feel/coll
 
 | id | severity | note |
 | --- | --- | --- |
+| B10 | S2 | Death respawned at checkpoint mid-stage; now always stage start (2026-10-10) |
+| B11 | S2 | Power-ups floated in air; now ground-glide + wall reverse + fall in pits (2026-10-10) |
+| B12 | S3 | Gaps shortened 20% via `_shrink_pits` (2026-10-10) |
 | B08 | S1 | Cap sprite drawn below feet (Art.make_sprite offset); looked off the path; fixed (2026-10-10) |
 | B09 | S1 | Stomp used slide normals; landing on enemy killed Cap; position+fall check (2026-10-10) |
 | B04 | S2 | Hidden blocks ignored head bumps; fixed in `player.gd` (2026-10-10) |

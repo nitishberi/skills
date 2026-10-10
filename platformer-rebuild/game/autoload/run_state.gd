@@ -87,6 +87,9 @@ func lose_life() -> void:
 	form = "small"
 	invuln_timer = 0.0
 	continue_world = world
+	# Death always restarts the stage from the beginning (no mid-level checkpoint).
+	clear_checkpoint()
+	max_camera_x = 0.0
 	changed.emit()
 
 func tick_time(delta: float) -> void:

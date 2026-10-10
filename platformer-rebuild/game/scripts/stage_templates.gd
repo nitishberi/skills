@@ -149,8 +149,10 @@ static func _pits(world: int, stage: int, width: int) -> Array:
 	for i in count:
 		var s := Catalog.seed(world, stage, i)
 		var start := 14 + (s % maxi(1, width - 24))
+		# Base gap length, then −20% (stage_controller also shrinks handcrafted pits).
 		var len := 2 + (s % 3)
-		pits.append([start, mini(start + len, width - 4)])
+		len = maxi(1, int(round(float(len) * 0.8)))
+		pits.append([start, mini(start + len - 1, width - 4)])
 	return pits
 
 static func _pick_item(world: int, stage: int, slot: int) -> int:
