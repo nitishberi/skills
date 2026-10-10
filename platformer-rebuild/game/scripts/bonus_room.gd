@@ -6,7 +6,7 @@ func _ready() -> void:
 	RenderingServer.set_default_clear_color(Color("1b263b"))
 	Music.play_theme("under")
 	_build()
-	_spawn_player(Vector2(48, 280))
+	_spawn_player(Vector2(48, 304))
 	add_child(preload("res://scenes/hud.tscn").instantiate())
 	add_child(preload("res://scenes/pause_layer.tscn").instantiate())
 

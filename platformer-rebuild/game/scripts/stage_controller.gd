@@ -15,7 +15,7 @@ var _active_world_item: Node = null
 func _ready() -> void:
 	_build_level()
 	Music.play_theme(_music_theme())
-	var spawn := Vector2(48, 280)
+	var spawn := Vector2(48, 304)
 	if RunState.use_pipe_spawn and RunState.pipe_return_pos != Vector2.ZERO:
 		spawn = RunState.pipe_return_pos
 		RunState.use_pipe_spawn = false
@@ -339,6 +339,12 @@ func _add_parallax(theme: String) -> void:
 		var tex_w := int(Art.texture(key).get_size().x)
 		if tex_w < 1:
 			tex_w = 64
+		if key.contains("hill"):
+			row.position.y = 268.0
+		elif key.contains("cloud") or key.contains("wave"):
+			row.position.y = 48.0
+		elif key.contains("castle") or key.contains("under"):
+			row.position.y = 120.0
 		for x in range(-64, 1400, tex_w):
 			var s := Art.make_sprite(key, false)
 			s.position.x = x
