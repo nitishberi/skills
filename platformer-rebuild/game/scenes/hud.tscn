@@ -16,6 +16,8 @@ theme_override_constants/margin_right = 8
 
 [node name="Label" type="Label" parent="Margin"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.149, 0.275, 0.325, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.973, 0.973, 0.906, 1)
+theme_override_colors/font_outline_color = Color(0.149, 0.275, 0.325, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
 text = "PIPE HOP"

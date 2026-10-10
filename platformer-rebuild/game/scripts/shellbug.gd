@@ -12,35 +12,27 @@ var mode: Mode = Mode.WALK
 var dead: bool = false
 var winged: bool = false
 var _hop_cd: float = 0.0
-var _shell_vis: ColorRect
-var _body_vis: ColorRect
-var _wing_vis: ColorRect
+var _body_sprite: Sprite2D
+var _shell_sprite: Sprite2D
+var _wing_sprite: Sprite2D
 
 func _ready() -> void:
 	add_to_group("enemies")
-	_build_visual()
+	_body_sprite = Art.make_sprite("shellbug", true)
+	_shell_sprite = Art.make_sprite("shellbug_shell", true)
+	_shell_sprite.visible = false
+	_wing_sprite = Art.make_sprite("wing", true)
+	_wing_sprite.position = Vector2(0, -10)
+	_wing_sprite.visible = winged
+	add_child(_body_sprite)
+	add_child(_shell_sprite)
+	add_child(_wing_sprite)
+	_sync_visual()
 
-func _build_visual() -> void:
-	_body_vis = ColorRect.new()
-	_body_vis.size = Vector2(14, 12)
-	_body_vis.position = Vector2(-7, -12)
-	_body_vis.color = Color("27ae60") if winged else Color("3d8b6e")
-	_body_vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_body_vis)
-	_shell_vis = ColorRect.new()
-	_shell_vis.size = Vector2(14, 10)
-	_shell_vis.position = Vector2(-7, -10)
-	_shell_vis.color = Color("1e8449") if winged else Color("2f6f4e")
-	_shell_vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_shell_vis.visible = false
-	add_child(_shell_vis)
-	_wing_vis = ColorRect.new()
-	_wing_vis.size = Vector2(18, 6)
-	_wing_vis.position = Vector2(-9, -18)
-	_wing_vis.color = Color("d5f5e3")
-	_wing_vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_wing_vis.visible = winged
-	add_child(_wing_vis)
+func _sync_visual() -> void:
+	_body_sprite.visible = mode == Mode.WALK
+	_shell_sprite.visible = mode != Mode.WALK
+	_wing_sprite.visible = winged and mode == Mode.WALK
 
 func _physics_process(delta: float) -> void:
 	if dead:
@@ -87,17 +79,13 @@ func stomp() -> void:
 	match mode:
 		Mode.WALK:
 			if winged:
-				# First stomp clips wings, becomes ground Shellbug
 				winged = false
-				_wing_vis.visible = false
-				_body_vis.color = Color("3d8b6e")
+				_sync_visual()
 				return
 			mode = Mode.SHELL
-			_body_vis.visible = false
-			_shell_vis.visible = true
+			_sync_visual()
 		Mode.SHELL:
 			mode = Mode.SLIDE
-			# kick in player facing; default right if unknown
 			var p := get_tree().get_first_node_in_group("player")
 			if p and p is Node2D:
 				dir = signf((p as Node2D).global_position.x - global_position.x) * -1.0
@@ -107,6 +95,7 @@ func stomp() -> void:
 				dir = 1.0
 		Mode.SLIDE:
 			mode = Mode.SHELL
+	_sync_visual()
 
 func hit_by_ember() -> void:
 	if dead:

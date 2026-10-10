@@ -9,21 +9,8 @@ var dead: bool = false
 
 func _ready() -> void:
 	add_to_group("enemies")
-	_build_visual()
-
-func _build_visual() -> void:
-	var body := ColorRect.new()
-	body.size = Vector2(14, 14)
-	body.position = Vector2(-7, -14)
-	body.color = Color("8d6e63")
-	body.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(body)
-	var eye := ColorRect.new()
-	eye.size = Vector2(3, 3)
-	eye.position = Vector2(-2, -11)
-	eye.color = Color("fff3e0")
-	eye.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(eye)
+	var s := Art.make_sprite("browncap", true)
+	add_child(s)
 
 func _physics_process(delta: float) -> void:
 	if dead:

@@ -13,6 +13,8 @@ config/icon="res://icon.svg"
 
 RunState="*res://autoload/run_state.gd"
 Sfx="*res://autoload/sfx.gd"
+Art="*res://autoload/art.gd"
+Music="*res://autoload/music.gd"
 
 [display]
 

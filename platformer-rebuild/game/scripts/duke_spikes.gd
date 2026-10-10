@@ -16,23 +16,8 @@ func _ready() -> void:
 	add_to_group("enemies")
 	add_to_group("duke_spikes")
 	hits_needed = 8 if is_final else 5
-	_build_visual()
-
-func _build_visual() -> void:
-	var body := ColorRect.new()
-	body.name = "Body"
-	body.size = Vector2(28, 28)
-	body.position = Vector2(-14, -28)
-	# Fake dukes are duller purple; final is richer
-	body.color = Color("5b2c6f") if is_final else Color("7d3c98")
-	body.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(body)
-	var spike := ColorRect.new()
-	spike.size = Vector2(8, 10)
-	spike.position = Vector2(-4, -38)
-	spike.color = Color("d5d8dc")
-	spike.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(spike)
+	var s := Art.make_sprite("duke_final" if is_final else "duke_fake", true)
+	add_child(s)
 	if not is_final:
 		var tag := Label.new()
 		tag.text = "IMPOSTOR"
@@ -78,12 +63,9 @@ func _defeat() -> void:
 	if is_final:
 		RunState.add_score(5000)
 	else:
-		# Impostor reveal: brief flash then score
 		RunState.add_score(2000)
-		var decoy := ColorRect.new()
-		decoy.size = Vector2(14, 14)
-		decoy.color = Color("3d8b6e")
-		decoy.global_position = global_position + Vector2(-7, -14)
+		var decoy := Art.make_sprite("shellbug", true)
+		decoy.global_position = global_position
 		get_tree().current_scene.add_child(decoy)
 		var t := decoy.create_tween()
 		t.tween_property(decoy, "modulate:a", 0.0, 0.6)

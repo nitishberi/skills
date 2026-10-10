@@ -4,6 +4,7 @@ const TILE := 16
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Color("1b263b"))
+	Music.play_theme("under")
 	_build()
 	_spawn_player(Vector2(48, 280))
 	add_child(preload("res://scenes/hud.tscn").instantiate())
@@ -52,12 +53,7 @@ func _solid(pos: Vector2, color: Color) -> void:
 	shape.shape = rect
 	shape.position = Vector2(8, 8)
 	body.add_child(shape)
-	var vis := ColorRect.new()
-	vis.size = Vector2(15, 15)
-	vis.position = Vector2(0.5, 0.5)
-	vis.color = color
-	vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	body.add_child(vis)
+	body.add_child(Art.make_sprite(Art.tile_key_for_color(color), false))
 	add_child(body)
 
 func _coin(pos: Vector2) -> void:

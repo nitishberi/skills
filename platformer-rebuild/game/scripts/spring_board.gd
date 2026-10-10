@@ -14,18 +14,7 @@ func _ready() -> void:
 	shape.shape = rect
 	shape.position = Vector2(8, 12)
 	add_child(shape)
-	var vis := ColorRect.new()
-	vis.size = Vector2(16, 6)
-	vis.position = Vector2(0, 10)
-	vis.color = Color("e74c3c")
-	vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(vis)
-	var top := ColorRect.new()
-	top.size = Vector2(16, 4)
-	top.position = Vector2(0, 6)
-	top.color = Color("f5b7b1")
-	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(top)
+	add_child(Art.make_sprite("spring", false))
 
 func _on_body(body: Node) -> void:
 	if body is CapPlayer:

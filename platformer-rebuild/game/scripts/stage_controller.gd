@@ -1,6 +1,7 @@
 extends Node2D
 
 const TILE := 16
+const FxScript := preload("res://scripts/fx.gd")
 
 @export var level_id: String = "1-1"
 
@@ -13,6 +14,7 @@ var _active_world_item: Node = null
 
 func _ready() -> void:
 	_build_level()
+	Music.play_theme(_music_theme())
 	var spawn := Vector2(48, 280)
 	if RunState.use_pipe_spawn and RunState.pipe_return_pos != Vector2.ZERO:
 		spawn = RunState.pipe_return_pos
@@ -54,6 +56,7 @@ func _spawn_player(pos: Vector2) -> CapPlayer:
 
 func _build_level() -> void:
 	_clear_world()
+	_add_parallax(_music_theme())
 	match level_id:
 		"1-2":
 			_build_level_1_2()
@@ -303,6 +306,47 @@ func _clear_world() -> void:
 	for c in entities.get_children():
 		c.queue_free()
 
+func _music_theme() -> String:
+	match level_id:
+		"1-2":
+			return "under"
+		"2-1":
+			return "water"
+		"1-4", "2-4":
+			return "castle"
+		_:
+			return "overworld"
+
+func _add_parallax(theme: String) -> void:
+	var bg := ParallaxBackground.new()
+	bg.scroll_ignore_camera_zoom = true
+	var layers: Array = []
+	match theme:
+		"water":
+			layers = [["para_wave", 0.15], ["para_cloud", 0.25]]
+		"castle":
+			layers = [["para_castle", 0.12], ["para_smoke", 0.22]]
+		"under":
+			layers = [["para_under", 0.1], ["para_under2", 0.18]]
+		_:
+			layers = [["para_hill_far", 0.12], ["para_hill_near", 0.22], ["para_cloud", 0.08]]
+	for entry in layers:
+		var key: String = entry[0]
+		var scale_x: float = entry[1]
+		var layer := ParallaxLayer.new()
+		layer.motion_scale = Vector2(scale_x, 0.0)
+		var row := Node2D.new()
+		var tex_w := int(Art.texture(key).get_size().x)
+		if tex_w < 1:
+			tex_w = 64
+		for x in range(-64, 1400, tex_w):
+			var s := Art.make_sprite(key, false)
+			s.position.x = x
+			row.add_child(s)
+		layer.add_child(row)
+		bg.add_child(layer)
+	world.add_child(bg)
+
 func _add_solid(pos: Vector2, color: Color) -> void:
 	var body := StaticBody2D.new()
 	body.position = pos
@@ -314,11 +358,8 @@ func _add_solid(pos: Vector2, color: Color) -> void:
 	shape.shape = rect
 	shape.position = Vector2(TILE * 0.5, TILE * 0.5)
 	body.add_child(shape)
-	var vis := ColorRect.new()
-	vis.size = Vector2(TILE - 1, TILE - 1)
-	vis.position = Vector2(0.5, 0.5)
-	vis.color = color
-	vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var key := Art.tile_key_for_color(color)
+	var vis := Art.make_sprite(key, false)
 	body.add_child(vis)
 	world.add_child(body)
 
@@ -504,26 +545,12 @@ func _add_solid_ref(pos: Vector2, color: Color) -> StaticBody2D:
 	shape.shape = rect
 	shape.position = Vector2(TILE * 0.5, TILE * 0.5)
 	body.add_child(shape)
-	var vis := ColorRect.new()
-	vis.size = Vector2(TILE - 1, TILE - 1)
-	vis.position = Vector2(0.5, 0.5)
-	vis.color = color
-	vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	body.add_child(vis)
+	body.add_child(Art.make_sprite(Art.tile_key_for_color(color), false))
 	world.add_child(body)
 	return body
 
 func _spawn_coin_burst(pos: Vector2) -> void:
-	# Visual only; coin already awarded in bump handler
-	var c := ColorRect.new()
-	c.size = Vector2(8, 10)
-	c.position = pos + Vector2(-4, -10)
-	c.color = Color("f1c40f")
-	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	entities.add_child(c)
-	var tween := create_tween()
-	tween.tween_property(c, "position:y", c.position.y - 24, 0.2)
-	tween.tween_callback(c.queue_free)
+	FxScript.coin_pop(entities, pos + Vector2(8, -8))
 
 func _spawn_browncap(pos: Vector2) -> void:
 	var e := Browncap.new()

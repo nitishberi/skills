@@ -17,11 +17,7 @@ func _ready() -> void:
 	shape.shape = rect
 	shape.position = Vector2(24, 6)
 	add_child(shape)
-	var vis := ColorRect.new()
-	vis.size = Vector2(48, 12)
-	vis.color = Color("d4a373")
-	vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(vis)
+	add_child(Art.make_sprite("mover", false))
 
 func _physics_process(delta: float) -> void:
 	_t += delta

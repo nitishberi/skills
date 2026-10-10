@@ -1,6 +1,8 @@
 extends CharacterBody2D
 class_name CapPlayer
 
+const FxScript := preload("res://scripts/fx.gd")
+
 signal died
 signal form_changed(form: String)
 
@@ -21,57 +23,47 @@ var jump_buf: float = 0.0
 var hurt_cooldown: float = 0.0
 var shoot_cooldown: float = 0.0
 var in_water: bool = false
-var _body: ColorRect
-var _hat: ColorRect
+var _sprite: Sprite2D
+var _anim_t: float = 0.0
+var _walk_frame: int = 0
 
 @onready var collision: CollisionShape2D = $CollisionShape2D
 
 func _ready() -> void:
 	add_to_group("player")
-	_build_visual()
+	_sprite = Art.make_sprite("cap_small_walk_0", true)
+	add_child(_sprite)
 	_apply_form_visual(RunState.form)
 	RunState.changed.connect(_on_run_changed)
 
-func _build_visual() -> void:
-	_body = ColorRect.new()
-	_body.name = "Body"
-	_body.color = Color("e9c46a")
-	_body.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_body)
-	_hat = ColorRect.new()
-	_hat.name = "Hat"
-	_hat.color = Color("2a9d8f")
-	_hat.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_hat)
-	_layout_visual("small")
-
-func _layout_visual(form: String) -> void:
+func _layout_collision(form: String) -> void:
 	var tall := form != "small"
 	var h := 28.0 if tall else 16.0
 	var w := 12.0
-	_body.size = Vector2(w, h)
-	_body.position = Vector2(-w * 0.5, -h)
-	_hat.size = Vector2(w + 2, 6)
-	_hat.position = Vector2(-(w + 2) * 0.5, -h - 5)
 	if collision.shape is RectangleShape2D:
 		var rect := collision.shape as RectangleShape2D
 		rect.size = Vector2(w, h)
 		collision.position = Vector2(0, -h * 0.5)
 
 func _apply_form_visual(form: String) -> void:
-	_layout_visual(form)
-	if form == "fire":
-		_body.color = Color("e76f51")
-		_hat.color = Color("264653")
-	elif form == "tall":
-		_body.color = Color("e9c46a")
-		_hat.color = Color("2a9d8f")
-	else:
-		_body.color = Color("f4a261")
-		_hat.color = Color("2a9d8f")
+	_layout_collision(form)
+	_refresh_sprite(0.0, true)
 
 func _on_run_changed() -> void:
 	_apply_form_visual(RunState.form)
+
+func _refresh_sprite(delta: float, force: bool = false) -> void:
+	var airborne := not is_on_floor()
+	if absf(velocity.x) > 8.0 and is_on_floor():
+		_anim_t += delta
+		if _anim_t > 0.12:
+			_anim_t = 0.0
+			_walk_frame = 1 - _walk_frame
+	elif force:
+		_walk_frame = 0
+	var key := Art.player_texture(RunState.form, _walk_frame, airborne)
+	_sprite.texture = Art.texture(key)
+	_sprite.flip_h = facing < 0.0
 
 func _physics_process(delta: float) -> void:
 	if hurt_cooldown > 0.0:
@@ -119,12 +111,12 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, FRICTION * delta)
 
-	# Fire form: tap run/shoot to toss EmberShot
 	if RunState.form == "fire" and Input.is_action_just_pressed("run") and shoot_cooldown <= 0.0:
 		_shoot_ember()
 
 	move_and_slide()
 	_resolve_collisions()
+	_refresh_sprite(delta)
 
 	if global_position.y > 420.0:
 		_die()
@@ -173,11 +165,9 @@ func _touch_enemy(enemy: Node, normal: Vector2) -> void:
 		elif enemy.has_method("stomp"):
 			enemy.stomp()
 		return
-	# Duke Spikes: unsafe to stomp; run past to the axe or use embers
 	if enemy.is_in_group("duke_spikes"):
 		_take_hit()
 		return
-	# Stomp if we hit mostly from above while falling
 	if normal.y < -0.5 and velocity.y >= 0.0:
 		if enemy.has_method("stomp"):
 			enemy.stomp()
@@ -185,8 +175,8 @@ func _touch_enemy(enemy: Node, normal: Vector2) -> void:
 			RunState.add_score(100)
 			Sfx.play("stomp")
 			_shake(3.0)
+			FxScript.stomp_dust(get_tree().current_scene, global_position)
 		return
-	# Walking into a resting shell kicks it
 	if enemy is Shellbug and (enemy as Shellbug).is_shell_idle():
 		(enemy as Shellbug).stomp()
 		return
@@ -213,7 +203,6 @@ func grow() -> void:
 	Sfx.play("power")
 
 func grant_fire() -> void:
-	# Ember Bloom always grants fire; small Caps grow first
 	if RunState.form == "small":
 		RunState.set_form("tall")
 	RunState.set_form("fire")

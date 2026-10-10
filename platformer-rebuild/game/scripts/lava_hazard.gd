@@ -20,11 +20,11 @@ func _ready() -> void:
 	shape.shape = rect
 	shape.position = rect.size * 0.5
 	add_child(shape)
-	var vis := ColorRect.new()
-	vis.size = rect.size
-	vis.color = Color("c0392b")
-	vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(vis)
+	for x in _tiles_w:
+		for y in _tiles_h:
+			var s := Art.make_sprite("lava", false)
+			s.position = Vector2(x * 16, y * 16)
+			add_child(s)
 
 func _on_body(body: Node) -> void:
 	if body is CapPlayer:

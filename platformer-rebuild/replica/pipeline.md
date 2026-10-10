@@ -19,7 +19,7 @@
 | 3 | game design | done | `game-design/gdd.md` |
 | 4 | replica-design | done | `design/tokens.json`, `design/components.md` |
 | 5 | implement | done | `game/` Worlds 1–2 |
-| 6 | feel | done | SFX + camera shake |
+| 6 | feel | done | Pixel art, parallax, chiptune SFX/BGM, camera shake, FX |
 | 7 | replica-test | done | `test-plan.md`, `bugs.md`, headless smoke |
 | 8 | replica-diff | done | `parity.md` (**100 / 100**, must-haves complete) |
 | 9 | replica-entrepreneur | skipped | `fixes.md` (personal; no fake reviews) |
@@ -37,3 +37,4 @@
 
 - 2026-10-09: game playable end-to-end
 - 2026-10-09: replica stage artifacts completed; parity 100; brand sweep clean
+- 2026-10-10: polish pass: `Art`/`Music` autoloads, sprites, parallax, exports rebuilt

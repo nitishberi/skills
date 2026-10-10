@@ -12,17 +12,9 @@ func _ready() -> void:
 	add_to_group("ember_shots")
 	body_entered.connect(_on_body)
 	area_entered.connect(_on_area)
-	_build_visual()
+	add_child(Art.make_sprite("ember_shot", true))
 	collision_layer = 0
-	collision_mask = 1 | 4 # world + enemies
-
-func _build_visual() -> void:
-	var v := ColorRect.new()
-	v.size = Vector2(8, 8)
-	v.position = Vector2(-4, -4)
-	v.color = Color("e76f51")
-	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(v)
+	collision_mask = 1 | 4
 
 func _physics_process(delta: float) -> void:
 	life -= delta
@@ -43,7 +35,6 @@ func _on_body(body: Node) -> void:
 			RunState.add_score(100)
 		queue_free()
 		return
-	# world bounce a couple times then die
 	if body is StaticBody2D:
 		bounced += 1
 		dir *= -1.0

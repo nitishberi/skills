@@ -8,7 +8,7 @@ enum Contents { COIN, BIG_BERRY, EMBER_BLOOM, SPARK_STAR, ONE_UP, EMPTY }
 @export var contents: Contents = Contents.COIN
 
 var used: bool = false
-var _vis: ColorRect
+var _sprite: Sprite2D
 
 func _ready() -> void:
 	add_to_group("question_blocks")
@@ -22,18 +22,15 @@ func _ready() -> void:
 		shape.shape = rect
 		shape.position = Vector2(8, 8)
 		add_child(shape)
-	_vis = ColorRect.new()
-	_vis.size = Vector2(15, 15)
-	_vis.position = Vector2(0.5, 0.5)
-	_vis.color = Color("e8a838")
-	_vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_vis)
+	_sprite = Art.make_sprite("question", false)
+	_sprite.position = Vector2(0, 0)
+	add_child(_sprite)
 
 func bump_from_below() -> void:
 	if used:
 		return
 	used = true
-	_vis.color = Color("7f8c8d")
+	_sprite.texture = Art.texture("question_used")
 	var tween := create_tween()
 	tween.tween_property(self, "position:y", position.y - 4, 0.05)
 	tween.tween_property(self, "position:y", position.y, 0.05)

@@ -6,8 +6,7 @@ func _ready() -> void:
 	RunState.changed.connect(_refresh)
 	_refresh()
 
-func _process(delta: float) -> void:
-	# Stage controller also ticks; keep HUD live
+func _process(_delta: float) -> void:
 	_refresh()
 
 func _refresh() -> void:

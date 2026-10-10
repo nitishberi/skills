@@ -17,21 +17,12 @@ func _ready() -> void:
 		circle.radius = 5
 		shape.shape = circle
 		ball.add_child(shape)
-		var vis := ColorRect.new()
-		vis.size = Vector2(10, 10)
-		vis.position = Vector2(-5, -5)
-		vis.color = Color("e74c3c")
-		vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		ball.add_child(vis)
+		ball.add_child(Art.make_sprite("fire_orb", true))
 		ball.position = Vector2((i + 1) * spacing, 0)
 		ball.body_entered.connect(_on_ball_body)
 		add_child(ball)
-	# hub
-	var hub := ColorRect.new()
-	hub.size = Vector2(8, 8)
-	hub.position = Vector2(-4, -4)
-	hub.color = Color("f5b041")
-	hub.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var hub := Art.make_sprite("fire_orb", true)
+	hub.scale = Vector2(0.7, 0.7)
 	add_child(hub)
 
 func _process(delta: float) -> void:

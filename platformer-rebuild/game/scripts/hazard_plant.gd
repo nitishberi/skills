@@ -3,7 +3,7 @@ class_name HazardPlant
 
 var _t: float = 0.0
 var _base: Vector2
-var _vis: ColorRect
+var _sprite: Sprite2D
 
 func _ready() -> void:
 	add_to_group("hazards")
@@ -18,20 +18,15 @@ func _ready() -> void:
 	shape.shape = rect
 	shape.position = Vector2(0, -8)
 	add_child(shape)
-	_vis = ColorRect.new()
-	_vis.size = Vector2(12, 16)
-	_vis.position = Vector2(-6, -16)
-	_vis.color = Color("196f3d")
-	_vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_vis)
+	_sprite = Art.make_sprite("plant", true)
+	add_child(_sprite)
 
 func _process(delta: float) -> void:
 	_t += delta
-	# Peek cycle: hidden then up
 	var phase := fmod(_t, 2.4)
 	var up := phase < 1.1
 	position.y = _base.y + (-18.0 if up else 8.0)
-	_vis.visible = up
+	_sprite.visible = up
 	monitoring = up
 
 func _on_body(body: Node) -> void:

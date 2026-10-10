@@ -15,12 +15,9 @@ func _ready() -> void:
 	shape.shape = rect
 	shape.position = Vector2(0, -6)
 	add_child(shape)
-	var vis := ColorRect.new()
-	vis.size = Vector2(20, 12)
-	vis.position = Vector2(-10, -12)
-	vis.color = Color("aed6f1")
-	vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(vis)
+	var s := Art.make_sprite("cloud", true)
+	s.scale = Vector2(0.45, 0.45)
+	add_child(s)
 
 func _physics_process(delta: float) -> void:
 	position.x += dir * SPEED * delta

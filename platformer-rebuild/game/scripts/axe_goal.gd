@@ -9,21 +9,7 @@ var bridge_nodes: Array = []
 func _ready() -> void:
 	add_to_group("goal")
 	body_entered.connect(_on_body)
-	_build_visual()
-
-func _build_visual() -> void:
-	var axe := ColorRect.new()
-	axe.size = Vector2(12, 16)
-	axe.position = Vector2(-6, -16)
-	axe.color = Color("bdc3c7")
-	axe.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(axe)
-	var handle := ColorRect.new()
-	handle.size = Vector2(4, 20)
-	handle.position = Vector2(-2, -10)
-	handle.color = Color("8e5a2b")
-	handle.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(handle)
+	add_child(Art.make_sprite("axe", true))
 
 func bind_bridge(nodes: Array) -> void:
 	bridge_nodes = nodes

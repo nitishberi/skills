@@ -16,12 +16,7 @@ func _ready() -> void:
 		circle.radius = 5
 		shape.shape = circle
 		add_child(shape)
-		var vis := ColorRect.new()
-		vis.size = Vector2(10, 10)
-		vis.position = Vector2(-5, -5)
-		vis.color = Color("922b21")
-		vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(vis)
+		add_child(Art.make_sprite("spike", true))
 
 func _physics_process(delta: float) -> void:
 	position.y += fall_speed * delta

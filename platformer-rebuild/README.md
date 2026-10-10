@@ -29,6 +29,10 @@ Godot **4.3+**. On macOS: Import `game/project.godot` → Play.
 **World 2:** underwater → pipes/plants → sky drops → harder castle.  
 Secret **warp** on 1-1 near the stairs → World 2. Hidden blocks, 1-Up, bonus pipe room, stage-clear tally, pause, continue, Hard Quest.
 
+## Polish
+
+Original **16px pixel art** (procedural, no Nintendo assets), parallax backgrounds, walk/jump animation, chiptune SFX and stage music. Generated at runtime via the `Art` and `Music` autoloads.
+
 ## Cast (ours)
 
 Cap, Browncap, Shellbug, Big Berry, Ember Bloom, Spark Star, One-Up berry, Duke Spikes, HazardPlant, CloudDropper.

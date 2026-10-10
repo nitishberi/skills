@@ -18,11 +18,13 @@ func _ready() -> void:
 	shape.shape = rect
 	shape.position = _size_px * 0.5
 	add_child(shape)
-	var vis := ColorRect.new()
-	vis.color = Color(0.2, 0.45, 0.7, 0.35)
-	vis.size = _size_px
-	vis.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(vis)
+	var tw := int(_size_px.x / 16)
+	var th := int(_size_px.y / 16)
+	for x in tw:
+		for y in th:
+			var s := Art.make_sprite("water", false)
+			s.position = Vector2(x * 16, y * 16)
+			add_child(s)
 
 func _on_enter(body: Node) -> void:
 	if body is CapPlayer:

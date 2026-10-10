@@ -57,6 +57,10 @@ func add_coin() -> void:
 		lives += 1
 	changed.emit()
 
+func add_life() -> void:
+	lives += 1
+	changed.emit()
+
 func set_form(next: String) -> void:
 	form = next
 	changed.emit()

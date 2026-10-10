@@ -4,12 +4,11 @@ class_name HopCoin
 func _ready() -> void:
 	add_to_group("pickups")
 	body_entered.connect(_on_body)
-	var v := ColorRect.new()
-	v.size = Vector2(8, 10)
-	v.position = Vector2(-4, -10)
-	v.color = Color("f1c40f")
-	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(v)
+	var s := Art.make_sprite("coin", true)
+	add_child(s)
+	var tw := create_tween().set_loops()
+	tw.tween_property(s, "position:y", -12.0, 0.4).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(s, "position:y", -8.0, 0.4).set_trans(Tween.TRANS_SINE)
 
 func _on_body(body: Node) -> void:
 	if body is CapPlayer:
