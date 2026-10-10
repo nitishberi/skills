@@ -11,7 +11,7 @@ func _ready() -> void:
 	add_to_group("enemies")
 	if RunState.hard_quest:
 		set_meta("speed_mul", SmbTuning.HARD_ENEMY_SPEED_MUL)
-	var s := Art.make_sprite("browncap", true)
+	var s := Art.make_sprite("mudbit", true)
 	add_child(s)
 
 func _physics_process(delta: float) -> void:

@@ -83,21 +83,32 @@ func _build_all() -> void:
 	_tex["question_used"] = _t(_draw_question(true))
 	_tex["hidden"] = _t(_draw_hidden())
 	_tex["coin"] = _t(_draw_coin())
-	_tex["berry"] = _t(_draw_berry())
-	_tex["ember"] = _t(_draw_ember())
-	_tex["star"] = _t(_draw_star())
-	_tex["one_up"] = _t(_draw_one_up())
-	_tex["browncap"] = _t(_draw_browncap())
-	_tex["shellbug"] = _t(_draw_shellbug(false))
-	_tex["shellbug_shell"] = _t(_draw_shellbug(true))
+	# Rise Melon / Blaze Bud / Zap Star / Extra Melon (replaced berry/ember/star/one_up look).
+	_tex["berry"] = _t(_draw_rise_melon())
+	_tex["rise_melon"] = _tex["berry"]
+	_tex["ember"] = _t(_draw_blaze_bud())
+	_tex["blaze_bud"] = _tex["ember"]
+	_tex["star"] = _t(_draw_zap_star())
+	_tex["zap_star"] = _tex["star"]
+	_tex["one_up"] = _t(_draw_extra_melon())
+	_tex["extra_melon"] = _tex["one_up"]
+	_tex["mudbit"] = _t(_draw_mudbit())
+	_tex["browncap"] = _tex["mudbit"]
+	_tex["coilbug"] = _t(_draw_coilbug(false))
+	_tex["coilbug_shell"] = _t(_draw_coilbug(true))
+	_tex["shellbug"] = _tex["coilbug"]
+	_tex["shellbug_shell"] = _tex["coilbug_shell"]
 	_tex["cliffbug"] = _t(_draw_cliffbug(false))
 	_tex["ashbug"] = _t(_draw_ashbug(false))
 	_tex["ashbug_shell"] = _t(_draw_ashbug(true))
 	_tex["wing"] = _t(_draw_wing())
 	_tex["duke_fake"] = _t(_draw_duke(false))
 	_tex["duke_final"] = _t(_draw_duke(true))
-	_tex["plant"] = _t(_draw_plant())
-	_tex["cloud"] = _t(_draw_cloud())
+	_tex["duke_flame"] = _t(_draw_duke_flame())
+	_tex["plant"] = _t(_draw_pipe_chomp())
+	_tex["pipe_chomp"] = _tex["plant"]
+	_tex["cloud"] = _t(_draw_sky_rider())
+	_tex["sky_rider"] = _tex["cloud"]
 	_tex["spike"] = _t(_draw_spike())
 	_tex["needler"] = _t(_draw_needler())
 	_tex["needler_egg"] = _t(_draw_needler_egg())
@@ -113,6 +124,7 @@ func _build_all() -> void:
 	_tex["ember_shot"] = _t(_draw_ember_shot())
 	_tex["flag_pole"] = _t(_draw_flag_pole())
 	_tex["flag_cloth"] = _t(_draw_flag_cloth())
+	_tex["firework"] = _t(_draw_firework())
 	_tex["axe"] = _t(_draw_axe())
 	_tex["fire_orb"] = _t(_draw_fire_orb())
 	_tex["lava"] = _t(_draw_lava())
@@ -228,6 +240,105 @@ func _draw_coin() -> Image:
 	_rect(img, 2, 1, 6, 10, Color("f39c12"))
 	_rect(img, 3, 2, 4, 8, Color("f1c40f"))
 	_px(img, 4, 3, Color("fdebd0"))
+	return img
+
+func _draw_rise_melon() -> Image:
+	var img := _img(14, 14)
+	_rect(img, 2, 4, 10, 8, Color("e74c3c"))
+	_rect(img, 4, 2, 6, 4, Color("c0392b"))
+	_px(img, 6, 1, Color("27ae60"))
+	_px(img, 7, 0, Color("2ecc71"))
+	_px(img, 5, 7, Color("fff3e0"))
+	return img
+
+func _draw_blaze_bud() -> Image:
+	var img := _img(14, 14)
+	_rect(img, 5, 8, 4, 5, Color("27ae60"))
+	_rect(img, 3, 3, 8, 6, Color("e67e22"))
+	_px(img, 6, 4, Color("f9ca24"))
+	_px(img, 8, 5, Color("f39c12"))
+	return img
+
+func _draw_zap_star() -> Image:
+	var img := _img(14, 14)
+	_px(img, 7, 1, Color("f1c40f"))
+	_px(img, 7, 2, Color("f9ca24"))
+	_rect(img, 4, 5, 6, 4, Color("f1c40f"))
+	_px(img, 2, 6, Color("f9ca24"))
+	_px(img, 11, 6, Color("f9ca24"))
+	_px(img, 7, 10, Color("f1c40f"))
+	_px(img, 5, 11, Color("f39c12"))
+	_px(img, 9, 11, Color("f39c12"))
+	return img
+
+func _draw_extra_melon() -> Image:
+	var img := _img(14, 14)
+	_rect(img, 2, 4, 10, 8, Color("27ae60"))
+	_rect(img, 4, 2, 6, 4, Color("1e8449"))
+	_px(img, 6, 1, Color("2ecc71"))
+	_rect(img, 5, 7, 4, 2, Color("145a32"))
+	return img
+
+func _draw_mudbit() -> Image:
+	var img := _img(16, 16)
+	_rect(img, 2, 5, 12, 9, Color("6e2c00"))
+	_rect(img, 3, 3, 10, 4, Color("935116"))
+	_px(img, 5, 7, Color("fff8e7"))
+	_px(img, 6, 7, Color("1c2833"))
+	_px(img, 10, 7, Color("fff8e7"))
+	_px(img, 11, 7, Color("1c2833"))
+	_rect(img, 4, 12, 3, 2, Color("4a235a"))
+	_rect(img, 9, 12, 3, 2, Color("4a235a"))
+	return img
+
+func _draw_coilbug(shell: bool) -> Image:
+	var img := _img(16, 14)
+	if shell:
+		_rect(img, 1, 4, 14, 8, Color("1a5276"))
+		for i in 4:
+			_px(img, 3 + i * 3, 6, Color("154360"))
+	else:
+		_rect(img, 2, 5, 12, 7, Color("2471a3"))
+		_px(img, 10, 7, Color("fff"))
+		_px(img, 11, 7, Color("1c2833"))
+		_rect(img, 1, 8, 3, 3, Color("1a5276"))
+		_rect(img, 12, 8, 3, 3, Color("1a5276"))
+	return img
+
+func _draw_pipe_chomp() -> Image:
+	var img := _img(16, 24)
+	_rect(img, 6, 0, 4, 10, Color("196f3d"))
+	_rect(img, 1, 2, 7, 8, Color("27ae60"))
+	_rect(img, 8, 2, 7, 8, Color("1e8449"))
+	_rect(img, 3, 4, 4, 3, Color("922b21"))
+	_rect(img, 9, 4, 4, 3, Color("922b21"))
+	_rect(img, 4, 12, 8, 10, Color("145a32"))
+	return img
+
+func _draw_sky_rider() -> Image:
+	var img := _img(48, 24)
+	_rect(img, 8, 10, 32, 10, Color("d6eaf8"))
+	_rect(img, 4, 14, 40, 6, Color("aed6f1"))
+	_rect(img, 14, 6, 20, 8, Color("ebf5fb"))
+	_rect(img, 18, 4, 12, 6, Color("5dade2"))
+	_px(img, 22, 6, Color("fff"))
+	_px(img, 26, 6, Color("fff"))
+	return img
+
+func _draw_duke_flame() -> Image:
+	var img := _img(18, 10)
+	_rect(img, 0, 2, 14, 6, Color("e74c3c"))
+	_rect(img, 10, 1, 8, 8, Color("f5b041"))
+	_px(img, 3, 4, Color("f9ca24"))
+	return img
+
+func _draw_firework() -> Image:
+	var img := _img(12, 12)
+	_px(img, 6, 6, Color("f9ca24"))
+	var offs := [[0, -4], [3, -3], [4, 0], [3, 3], [0, 4], [-3, 3], [-4, 0], [-3, -3]]
+	for i in offs.size():
+		var o: Array = offs[i]
+		_px(img, 6 + int(o[0]), 6 + int(o[1]), Color("e74c3c") if i % 2 == 0 else Color("3498db"))
 	return img
 
 func _draw_berry() -> Image:

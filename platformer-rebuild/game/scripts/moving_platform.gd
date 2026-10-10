@@ -11,13 +11,18 @@ func _ready() -> void:
 	_origin = position
 	collision_layer = 1
 	collision_mask = 0
+	# Hard Quest: shorter lifts (wiki wide→narrow).
+	var w := 32.0 if RunState.hard_quest else 48.0
 	var shape := CollisionShape2D.new()
 	var rect := RectangleShape2D.new()
-	rect.size = Vector2(48, 12)
+	rect.size = Vector2(w, 12)
 	shape.shape = rect
-	shape.position = Vector2(24, 6)
+	shape.position = Vector2(w * 0.5, 6)
 	add_child(shape)
-	add_child(Art.make_sprite("mover", false))
+	var spr := Art.make_sprite("mover", false)
+	if RunState.hard_quest:
+		spr.scale.x = 0.67
+	add_child(spr)
 
 func _physics_process(delta: float) -> void:
 	_t += delta

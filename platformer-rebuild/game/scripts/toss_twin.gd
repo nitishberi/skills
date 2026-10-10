@@ -31,8 +31,9 @@ func _physics_process(delta: float) -> void:
 	if is_on_floor() and _hop_cd <= 0.0:
 		velocity.y = -160.0
 		_hop_cd = 1.1
-	# After long on-screen time, start chasing Cap (wiki Hammer Bro pattern).
-	if on_screen_t > 12.0:
+	# Wiki: after ~100 timer units on-screen, chase Cap.
+	# Timer units run at TIMER_UNITS_PER_SECOND (2.5) → ~40 real seconds; use 100/2.5.
+	if on_screen_t > (100.0 / SmbTuning.TIMER_UNITS_PER_SECOND):
 		var p := get_tree().get_first_node_in_group("player")
 		if p and p is Node2D:
 			dir = signf((p as Node2D).global_position.x - global_position.x)

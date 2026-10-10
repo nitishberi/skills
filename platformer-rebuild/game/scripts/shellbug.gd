@@ -22,6 +22,7 @@ var combo: int = 0
 var _hop_cd: float = 0.0
 var _hover_origin_y: float = 0.0
 var _hover_t: float = 0.0
+var _shell_wake: float = 0.0 ## Idle shell wakes back to walk (~wiki).
 var _body_sprite: Sprite2D
 var _shell_sprite: Sprite2D
 var _wing_sprite: Sprite2D
@@ -33,8 +34,9 @@ func _ready() -> void:
 	if winged and flight == Flight.NONE:
 		flight = Flight.HOP
 	_hover_origin_y = position.y
-	var body_key := "ashbug" if fireproof else ("cliffbug" if cliff_turn else "shellbug")
-	var shell_key := "ashbug_shell" if fireproof else "shellbug_shell"
+	# New names: Coilbug / Cliffbug / Ashbug / Hopcoil / Hoverbug
+	var body_key := "ashbug" if fireproof else ("cliffbug" if cliff_turn else "coilbug")
+	var shell_key := "ashbug_shell" if fireproof else "coilbug_shell"
 	_body_sprite = Art.make_sprite(body_key, true)
 	_shell_sprite = Art.make_sprite(shell_key, true)
 	_shell_sprite.visible = false
@@ -77,6 +79,11 @@ func _physics_process(delta: float) -> void:
 					_hop_cd = 0.9
 		Mode.SHELL:
 			velocity.x = 0.0
+			_shell_wake -= delta
+			if _shell_wake <= 0.0:
+				mode = Mode.WALK
+				combo = 0
+				_sync_visual()
 		Mode.SLIDE:
 			velocity.x = dir * SLIDE_SPEED * _speed_mul()
 			if is_on_wall():
@@ -107,19 +114,12 @@ func _hit_others() -> void:
 			elif other.has_method("stomp"):
 				other.stomp()
 			combo += 1
-			var pts := 100
-			match mini(combo, 5):
-				1:
-					pts = 200
-				2:
-					pts = 400
-				3:
-					pts = 800
-				4:
-					pts = 1000
-				_:
-					pts = 2000
-			RunState.add_score(pts)
+			# Wiki bulldozer: 100,200,400,800,1000,2000,4000,8000, then 1-up.
+			var table := [100, 200, 400, 800, 1000, 2000, 4000, 8000]
+			if combo <= table.size():
+				RunState.add_score(table[combo - 1])
+			else:
+				RunState.add_life()
 
 func stomp() -> void:
 	if dead:
@@ -133,10 +133,12 @@ func stomp() -> void:
 				return
 			mode = Mode.SHELL
 			combo = 0
+			_shell_wake = 4.0
 			_sync_visual()
 		Mode.SHELL:
 			mode = Mode.SLIDE
 			combo = 0
+			_shell_wake = 0.0
 			var p := get_tree().get_first_node_in_group("player")
 			if p and p is Node2D:
 				dir = signf((p as Node2D).global_position.x - global_position.x) * -1.0
@@ -147,6 +149,7 @@ func stomp() -> void:
 		Mode.SLIDE:
 			mode = Mode.SHELL
 			combo = 0
+			_shell_wake = 4.0
 	_sync_visual()
 
 func hit_by_ember() -> void:

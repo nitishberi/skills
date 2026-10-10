@@ -42,9 +42,11 @@ func _make_loop(name: String) -> AudioStreamWAV:
 			notes = PackedFloat32Array([330, 349, 392, 440, 392, 349, 330, 294, 330, 349, 392, 440, 494, 440, 392, 0])
 		"castle":
 			notes = PackedFloat32Array([196, 196, 220, 247, 220, 196, 175, 196, 220, 247, 262, 247, 220, 196, 175, 0])
+		"star":
+			notes = PackedFloat32Array([784, 880, 988, 1047, 988, 880, 784, 659, 784, 880, 988, 1175, 1047, 988, 880, 0])
 		_:
 			notes = PackedFloat32Array([392, 440, 494, 523, 0])
-	return _sequence_to_wav(notes, 0.18 if name == "castle" else 0.22)
+	return _sequence_to_wav(notes, 0.14 if name == "star" else (0.18 if name == "castle" else 0.22))
 
 func _sequence_to_wav(freqs: PackedFloat32Array, step: float) -> AudioStreamWAV:
 	var sample_rate := 22050

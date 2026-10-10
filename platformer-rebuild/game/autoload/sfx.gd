@@ -24,6 +24,10 @@ func play(kind: String) -> void:
 			stream = _arpeggio([280, 220], 0.06)
 		"hurt":
 			stream = _arpeggio([180, 140, 100], 0.12)
+		"power_down":
+			stream = _arpeggio([660, 440, 330, 220], 0.07)
+		"pipe":
+			stream = _arpeggio([300, 240, 180], 0.1)
 		"clear":
 			stream = _arpeggio([523, 659, 784, 1047], 0.1)
 		"pause":

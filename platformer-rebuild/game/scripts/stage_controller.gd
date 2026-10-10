@@ -96,31 +96,35 @@ func _shrink_pits(pit_ranges: Array) -> Array:
 	return out
 
 func _build_level_1_1() -> void:
-	_build_ground(80, [[18, 21]])
+	_build_ground(112, [[18, 20], [46, 48], [72, 74]])
 	_add_question(Vector2(10 * TILE, 240), QuestionBlock.Contents.COIN)
 	_add_question(Vector2(11 * TILE, 240), QuestionBlock.Contents.BIG_BERRY)
-	_add_question(Vector2(12 * TILE, 240), QuestionBlock.Contents.COIN)
+	_add_question(Vector2(12 * TILE, 240), QuestionBlock.Contents.MULTI_COIN)
 	_add_brick(Vector2(13 * TILE, 240))
 	_add_brick(Vector2(14 * TILE, 240))
 	_add_question(Vector2(15 * TILE, 240), QuestionBlock.Contents.ONE_UP)
 	_add_hidden(Vector2(16 * TILE, 208), HiddenBlock.Contents.COIN)
 	_add_hidden(Vector2(17 * TILE, 208), HiddenBlock.Contents.ONE_UP)
 	_add_pipe(Vector2(28 * TILE, 288), true)
-	for i in range(5):
+	_add_pipe(Vector2(58 * TILE, 288), false)
+	_spawn_plant(Vector2(58 * TILE + 16, 288))
+	for i in range(6):
 		for j in range(i + 1):
-			_add_solid(Vector2((55 + i) * TILE, 320 - (j + 1) * TILE), Color("6d4c41"))
+			_add_solid(Vector2((96 + i) * TILE, 320 - (j + 1) * TILE), Color("6d4c41"))
 	_spawn_browncap(Vector2(14 * TILE, 300))
 	_spawn_browncap(Vector2(34 * TILE, 300))
 	_spawn_shellbug(Vector2(40 * TILE, 300))
 	_spawn_cliffbug(Vector2(48 * TILE, 300))
-	_spawn_goal(Vector2(70 * TILE, 320))
+	_spawn_browncap(Vector2(64 * TILE, 300))
+	_spawn_shellbug(Vector2(82 * TILE, 300))
+	_spawn_goal(Vector2(104 * TILE, 320))
 	# Secret warp near end stairs
-	_add_warp(Vector2(60 * TILE, 272), 2, 1)
+	_add_warp(Vector2(92 * TILE, 272), 2, 1)
 
 func _build_level_1_2() -> void:
-	# Slightly longer underground-ish: darker ground, more Shellbugs, Ember Bloom block
-	_build_ground(96, [[22, 24], [48, 50]])
-	for x in range(0, 96):
+	# Longer underground: darker ground, more Coilbugs, Blaze Bud block
+	_build_ground(128, [[22, 24], [48, 50], [78, 80], [100, 102]])
+	for x in range(0, 128):
 		_add_solid(Vector2(x * TILE, 0), Color("1b263b")) # ceiling strip vibe
 	_add_question(Vector2(8 * TILE, 240), QuestionBlock.Contents.BIG_BERRY)
 	_add_question(Vector2(9 * TILE, 240), QuestionBlock.Contents.EMBER_BLOOM)
@@ -129,22 +133,26 @@ func _build_level_1_2() -> void:
 	_add_pipe(Vector2(16 * TILE, 288), false)
 	_spawn_plant(Vector2(16 * TILE + 16, 288))
 	_spawn_hoverbug(Vector2(44 * TILE, 220))
-	for i in range(6):
+	_spawn_cliffbug(Vector2(66 * TILE, 300))
+	_spawn_ashbug(Vector2(90 * TILE, 300))
+	for i in range(7):
 		for j in range(i + 1):
-			_add_solid(Vector2((70 + i) * TILE, 320 - (j + 1) * TILE), Color("415a77"))
+			_add_solid(Vector2((108 + i) * TILE, 320 - (j + 1) * TILE), Color("415a77"))
 	_spawn_browncap(Vector2(12 * TILE, 300))
 	_spawn_shellbug(Vector2(20 * TILE, 300))
 	_spawn_shellbug(Vector2(32 * TILE, 300))
 	_spawn_browncap(Vector2(42 * TILE, 300))
 	_spawn_shellbug(Vector2(58 * TILE, 300))
-	_spawn_goal(Vector2(88 * TILE, 320))
+	_spawn_shellbug(Vector2(96 * TILE, 300))
+	_spawn_goal(Vector2(120 * TILE, 320))
 
 func _build_level_1_3() -> void:
-	# Athletic-ish: floating bricks, Spark Star, springs, movers
-	_build_ground(100, [[16, 19], [30, 33], [50, 53], [68, 70]])
+	# Athletic: longer float course, Zap Star, springs, movers
+	_build_ground(140, [[16, 19], [30, 33], [50, 53], [68, 71], [90, 93], [110, 113]])
 	_add_question(Vector2(8 * TILE, 224), QuestionBlock.Contents.BIG_BERRY)
 	_add_question(Vector2(20 * TILE, 208), QuestionBlock.Contents.SPARK_STAR)
 	_add_question(Vector2(40 * TILE, 224), QuestionBlock.Contents.EMBER_BLOOM)
+	_add_question(Vector2(84 * TILE, 192), QuestionBlock.Contents.MULTI_COIN)
 	_add_hidden(Vector2(41 * TILE, 176), HiddenBlock.Contents.COIN)
 	for x in range(24, 28):
 		_add_brick(Vector2(x * TILE, 240))
@@ -153,17 +161,20 @@ func _build_level_1_3() -> void:
 	for x in range(17, 20):
 		_add_solid(Vector2(x * TILE, 272), Color("e8a838"))
 	_add_spring(Vector2(18 * TILE, 256))
+	_add_spring(Vector2(100 * TILE, 256))
 	_add_mover(Vector2(32 * TILE, 240), Vector2(80, 0), 2.8)
 	_add_mover(Vector2(52 * TILE, 200), Vector2(0, 48), 2.2)
-	for i in range(4):
+	_add_mover(Vector2(74 * TILE, 220), Vector2(64, -32), 2.5)
+	for i in range(5):
 		for j in range(i + 1):
-			_add_solid(Vector2((78 + i) * TILE, 320 - (j + 1) * TILE), Color("6d4c41"))
+			_add_solid(Vector2((124 + i) * TILE, 320 - (j + 1) * TILE), Color("6d4c41"))
 	_spawn_browncap(Vector2(10 * TILE, 300))
 	_spawn_shellbug(Vector2(26 * TILE, 300), true)
+	_spawn_hoverbug(Vector2(48 * TILE, 180))
 	_spawn_browncap(Vector2(38 * TILE, 300))
 	_spawn_shellbug(Vector2(56 * TILE, 300))
-	_spawn_cloud(Vector2(60 * TILE, 120))
-	_spawn_goal(Vector2(92 * TILE, 320))
+	_spawn_cloud(Vector2(96 * TILE, 110))
+	_spawn_goal(Vector2(134 * TILE, 320))
 
 func _build_level_1_4() -> void:
 	# Castle: dark hall, lava pit, bridge, Duke Spikes, axe
@@ -377,11 +388,15 @@ func _add_question(pos: Vector2, contents: QuestionBlock.Contents) -> void:
 func _on_question_bumped(block: QuestionBlock) -> void:
 	var spawn_pos := block.position + Vector2(8, -8)
 	match block.contents:
-		QuestionBlock.Contents.COIN:
+		QuestionBlock.Contents.COIN, QuestionBlock.Contents.MULTI_COIN:
 			RunState.add_coin()
 			_spawn_coin_burst(spawn_pos)
 		QuestionBlock.Contents.BIG_BERRY:
-			_spawn_world_item(_make_berry(spawn_pos))
+			# Wiki: if already tall/fire, mushroom block yields flower instead.
+			if RunState.form == "tall" or RunState.form == "fire":
+				_spawn_world_item(_make_ember(spawn_pos))
+			else:
+				_spawn_world_item(_make_berry(spawn_pos))
 		QuestionBlock.Contents.EMBER_BLOOM:
 			_spawn_world_item(_make_ember(spawn_pos))
 		QuestionBlock.Contents.SPARK_STAR:

@@ -13,6 +13,8 @@ var hurt_cooldown: float = 0.0
 var shoot_cooldown: float = 0.0
 var in_water: bool = false
 var input_locked: bool = false
+var crouching: bool = false
+var _star_theme_armed: bool = false
 var _sprite: Sprite2D
 var _anim_t: float = 0.0
 var _walk_frame: int = 0
@@ -29,11 +31,17 @@ func _ready() -> void:
 func _layout_collision(form: String) -> void:
 	var tall := form != "small"
 	var h := 28.0 if tall else 16.0
+	if crouching and tall:
+		h = 14.0
 	var w := 12.0
 	if collision.shape is RectangleShape2D:
 		var rect := collision.shape as RectangleShape2D
 		rect.size = Vector2(w, h)
 		collision.position = Vector2(0, -h * 0.5)
+
+func _restore_stage_theme() -> String:
+	var Catalog = load("res://scripts/level_catalog.gd")
+	return Catalog.music_theme(RunState.world, RunState.stage)
 
 func _apply_form_visual(form: String) -> void:
 	_layout_collision(form)
@@ -67,8 +75,23 @@ func _physics_process(delta: float) -> void:
 	if RunState.invuln_timer > 0.0:
 		RunState.invuln_timer = maxf(0.0, RunState.invuln_timer - delta)
 		modulate.a = 0.55 if int(RunState.invuln_timer * 20) % 2 == 0 else 1.0
+		if RunState.invuln_timer <= 0.0 and _star_theme_armed:
+			_star_theme_armed = false
+			Music.play_theme(_restore_stage_theme())
 	else:
 		modulate = Color.WHITE
+		if _star_theme_armed:
+			_star_theme_armed = false
+			Music.play_theme(_restore_stage_theme())
+
+	# Crouch while tall/fire (wiki): shrink hitbox, pass short gaps.
+	crouching = (
+		not in_water
+		and is_on_floor()
+		and RunState.form != "small"
+		and Input.is_action_pressed("move_down")
+	)
+	_layout_collision(RunState.form)
 
 	if in_water:
 		velocity.y = minf(160.0, velocity.y + 220.0 * delta)
@@ -100,7 +123,9 @@ func _physics_process(delta: float) -> void:
 			velocity.y *= SmbTuning.JUMP_CUT
 
 	var dir := Input.get_axis("move_left", "move_right")
-	var running := Input.is_action_pressed("run")
+	if crouching:
+		dir = 0.0
+	var running := Input.is_action_pressed("run") and not crouching
 	var cap := SmbTuning.RUN_MAX if running else SmbTuning.WALK_MAX
 	if in_water:
 		cap *= 0.75
@@ -218,6 +243,7 @@ func _take_hit() -> void:
 		RunState.set_form("small")
 		RunState.invuln_timer = SmbTuning.HIT_IFRAMES
 		form_changed.emit(RunState.form)
+		Sfx.play("power_down")
 	else:
 		_die()
 
@@ -229,9 +255,11 @@ func grow() -> void:
 	Sfx.play("power")
 
 func grant_fire() -> void:
+	# Wiki: small + flower → tall only; tall/fire + flower → fire form.
 	if RunState.form == "small":
 		RunState.set_form("tall")
-	RunState.set_form("fire")
+	else:
+		RunState.set_form("fire")
 	form_changed.emit(RunState.form)
 	RunState.add_score(1000)
 	Sfx.play("power")
@@ -243,6 +271,8 @@ func grant_invuln(seconds: float = -1.0) -> void:
 	modulate = Color(1.3, 1.25, 0.7)
 	RunState.add_score(1000)
 	Sfx.play("power")
+	Music.play_theme("star")
+	_star_theme_armed = true
 
 func slide_down_pole(target_y: float, duration: float) -> void:
 	input_locked = true

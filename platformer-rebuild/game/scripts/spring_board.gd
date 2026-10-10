@@ -1,7 +1,9 @@
 extends Area2D
 class_name SpringBoard
+## Hop Pad: base bounce; hold jump at compression for max bounce (wiki trampoline).
 
-@export var boost: float = -520.0
+@export var boost_min: float = -380.0
+@export var boost_max: float = -560.0
 
 func _ready() -> void:
 	collision_layer = 1
@@ -18,5 +20,6 @@ func _ready() -> void:
 
 func _on_body(body: Node) -> void:
 	if body is CapPlayer:
-		body.velocity.y = boost
+		var hold := Input.is_action_pressed("jump")
+		body.velocity.y = boost_max if hold else boost_min
 		Sfx.play("jump")

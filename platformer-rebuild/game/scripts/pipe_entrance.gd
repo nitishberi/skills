@@ -37,4 +37,5 @@ func _physics_process(_delta: float) -> void:
 	RunState.pipe_return_pos = player.global_position + Vector2(40, 0)
 	RunState.pipe_marker = return_marker
 	RunState.use_pipe_spawn = true
+	Sfx.play("pipe")
 	get_tree().change_scene_to_file(bonus_scene)
