@@ -10,7 +10,7 @@ func _ready() -> void:
 	Music.play_theme("title")
 	_add_hills()
 	# Force visible build stamp (do not rely only on .tscn text)
-	sub.text = "8 WORLDS  ·  BUILD 0.3.2\nClassic moves. Original names and look.\nPress Enter or Space"
+	sub.text = "8 WORLDS  ·  BUILD 0.4.0\nClassic moves. Original names and look.\nPress Enter or Space"
 	var tw := create_tween().set_loops()
 	tw.tween_property(sub, "modulate:a", 0.35, 0.55)
 	tw.tween_property(sub, "modulate:a", 1.0, 0.55)

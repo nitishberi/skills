@@ -16,7 +16,7 @@ Coins and 100-coin extra life,collectibles,must,yes,yes,
 1-Up pickup grants a life,collectibles,must,yes,yes,OneUpBerry
 Lives counter; death restarts stage fanfare,lives,must,yes,yes,
 Game over at zero lives,lives,must,yes,yes,
-Multi-world multi-stage campaign,levels,must,yes,yes,Worlds 1-2 (4 stages each)
+Multi-world multi-stage campaign,levels,must,yes,yes,Worlds 1-8 (32 stages; W1-2 handcrafted; W3-8 paced original)
 Stage clear via end goal (flag-style),levels,must,yes,yes,GoalFlag + tally
 Castle stage with lava and fire-bar hazards,levels,must,yes,yes,
 CastleBoss encounter per world end,bosses,must,yes,yes,Duke Spikes both worlds
@@ -31,11 +31,17 @@ Continue from current world after game over,lives,should,yes,yes,press C
 Hard quest unlock after first clear,meta,should,yes,yes,H on world clear/title
 Score and time-clear bonus tally,scoring,should,yes,yes,stage_clear.tscn
 Spring boards and moving platforms,levels,should,yes,yes,
-Winged ShellCrawler and advanced enemy set,combat,should,yes,yes,Winged Shellbug + CloudDropper
-HazardPlant in pipes,combat,should,yes,yes,
-Cloud spawner / spiked dropper patterns,combat,could,yes,yes,CloudDropper
-Hammer-thrower pairs,combat,could,yes,skip,cut for personal scope
-Beetle-like fireproof crawler,combat,could,yes,skip,cut for personal scope
+Winged ShellCrawler and advanced enemy set,combat,should,yes,yes,Shellbug hop + Hoverbug vertical
+HazardPlant in pipes,combat,should,yes,yes,proximity hide when Cap on pipe
+Cloud spawner / spiked dropper patterns,combat,could,yes,yes,CloudDropper + Needler Egg
+Red ledge-turning shell,combat,should,yes,yes,Cliffbug
+Shell kick combo scoring,combat,should,yes,yes,200→400→800→1000→2000 chain
+Hammer-thrower pairs,combat,could,yes,yes,Toss Twins
+Beetle-like fireproof crawler,combat,could,yes,yes,Ashbug; Hard Quest swaps Browncaps
+Spiky crawler (stomp hurts),combat,could,yes,yes,Needler
+Cannon + straight shot,combat,could,yes,yes,Iron Snout + Pipe Shot
+Water fish and squid,combat,could,yes,yes,Swimfin + Inkjet
+Lava hopper,combat,could,yes,yes,Ember Blob
 Vine to bonus area,levels,could,yes,skip,pipe bonus covers this fantasy
 Alternating two-player mode,multiplayer,could,yes,skip,out of user slice
 Nintendo character names and likenesses,ip,must,yes,skip,nintendo_ip

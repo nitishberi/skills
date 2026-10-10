@@ -112,6 +112,7 @@ func _build_level_1_1() -> void:
 	_spawn_browncap(Vector2(14 * TILE, 300))
 	_spawn_browncap(Vector2(34 * TILE, 300))
 	_spawn_shellbug(Vector2(40 * TILE, 300))
+	_spawn_cliffbug(Vector2(48 * TILE, 300))
 	_spawn_goal(Vector2(70 * TILE, 320))
 	# Secret warp near end stairs
 	_add_warp(Vector2(60 * TILE, 272), 2, 1)
@@ -127,6 +128,7 @@ func _build_level_1_2() -> void:
 	_add_question(Vector2(36 * TILE, 224), QuestionBlock.Contents.EMBER_BLOOM)
 	_add_pipe(Vector2(16 * TILE, 288), false)
 	_spawn_plant(Vector2(16 * TILE + 16, 288))
+	_spawn_hoverbug(Vector2(44 * TILE, 220))
 	for i in range(6):
 		for j in range(i + 1):
 			_add_solid(Vector2((70 + i) * TILE, 320 - (j + 1) * TILE), Color("415a77"))
@@ -519,6 +521,10 @@ func _spawn_coin_burst(pos: Vector2) -> void:
 	FxScript.coin_pop(entities, pos + Vector2(8, -8))
 
 func _spawn_browncap(pos: Vector2) -> void:
+	# Hard Quest swaps walkers for fireproof Ashbugs (wiki Buzzy Beetle role).
+	if RunState.hard_quest:
+		_spawn_shellbug(pos, false, false, true, false)
+		return
 	var e := Browncap.new()
 	e.collision_layer = 4
 	e.collision_mask = 1
@@ -532,9 +538,15 @@ func _spawn_browncap(pos: Vector2) -> void:
 	e.position = Vector2(pos.x, mini(pos.y, 304.0))
 	entities.add_child(e)
 
-func _spawn_shellbug(pos: Vector2, winged: bool = false) -> void:
+func _spawn_shellbug(pos: Vector2, winged: bool = false, cliff_turn: bool = false, fireproof: bool = false, hover: bool = false) -> void:
 	var e := Shellbug.new()
-	e.winged = winged
+	e.winged = winged or hover
+	e.cliff_turn = cliff_turn
+	e.fireproof = fireproof
+	if hover:
+		e.flight = Shellbug.Flight.VERTICAL
+	elif winged:
+		e.flight = Shellbug.Flight.HOP
 	e.collision_layer = 4
 	e.collision_mask = 1 | 4
 	var shape := CollisionShape2D.new()
@@ -543,6 +555,50 @@ func _spawn_shellbug(pos: Vector2, winged: bool = false) -> void:
 	shape.shape = rect
 	shape.position = Vector2(0, -6)
 	e.add_child(shape)
+	e.position = Vector2(pos.x, mini(pos.y, 304.0) if not hover else pos.y)
+	entities.add_child(e)
+
+func _spawn_cliffbug(pos: Vector2) -> void:
+	_spawn_shellbug(pos, false, true, false, false)
+
+func _spawn_ashbug(pos: Vector2) -> void:
+	_spawn_shellbug(pos, false, false, true, false)
+
+func _spawn_hoverbug(pos: Vector2) -> void:
+	_spawn_shellbug(pos, true, false, false, true)
+
+func _spawn_needler(pos: Vector2) -> void:
+	var e := Needler.new()
+	e.collision_layer = 4
+	e.collision_mask = 1
+	e.position = Vector2(pos.x, mini(pos.y, 304.0))
+	entities.add_child(e)
+
+func _spawn_iron_snout(pos: Vector2, shot_dir: float = -1.0) -> void:
+	var c := IronSnout.new()
+	c.position = pos
+	c.shot_dir = shot_dir
+	entities.add_child(c)
+
+func _spawn_swimfin(pos: Vector2) -> void:
+	var e := Swimfin.new()
+	e.position = pos
+	entities.add_child(e)
+
+func _spawn_inkjet(pos: Vector2) -> void:
+	var e := Inkjet.new()
+	e.position = pos
+	entities.add_child(e)
+
+func _spawn_ember_blob(pos: Vector2) -> void:
+	var e := EmberBlob.new()
+	e.position = pos
+	entities.add_child(e)
+
+func _spawn_toss_twin(pos: Vector2) -> void:
+	var e := TossTwin.new()
+	e.collision_layer = 4
+	e.collision_mask = 1
 	e.position = Vector2(pos.x, mini(pos.y, 304.0))
 	entities.add_child(e)
 

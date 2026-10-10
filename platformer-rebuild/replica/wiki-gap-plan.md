@@ -44,7 +44,7 @@
 
 | SMB | Pipe Hop |
 | --- | --- |
-| Fake Bowser W1–7 (flame early, hammers W6–7) | **Duke Spikes** impostor; **no flame/hammer patterns** |
+| Fake Bowser W1-7 (flame early, hammers W6-7) | **Duke Spikes** impostor; **no flame/hammer patterns** |
 | Real Bowser W8 (flame + hammers) | Final Duke; ember hits / axe only |
 | 5 fireballs → 5000 + reveal | Ember hit count yes; **reveal minion VFX weak** |
 | Retainer / princess end copy | Original text only (correct IP) |
@@ -84,7 +84,7 @@
 
 | SMB | Pipe Hop |
 | --- | --- |
-| 8×4 worlds, typed stages | Yes (procedural W3–8) |
+| 8×4 worlds, typed stages | Yes (procedural W3-8) |
 | Night / snow palettes W3/5/6/7 | Partial sky tint |
 | Hard Mode (beetles, faster, short lifts) | Faster foes only |
 | Continue world after Game Over | Yes (C) |
@@ -108,45 +108,45 @@
 
 ## 2. Priority plan (implementation order)
 
-### Phase A — Combat parity (highest play impact)
+### Phase A: Combat parity (highest play impact)
 
-1. **Red Shellbug** — turn at ledge edges (not walk off).
-2. **Vertical winged Shellbug** — up/down path; stomp → ground Shellbug.
-3. **Piranha proximity** — do not emerge if Cap is on/beside pipe.
-4. **Shell combo scoring** — escalating points while one shell slides.
-5. **Fireproof Beetle** (was skipped) — shell enemy immune to EmberShot; Hard Quest swaps Browncaps → Beetles.
-6. **Hammer Pair** (was skipped) — two throwers on block rows; optional chase after long on-screen time.
-7. **Spiny + egg + refined CloudDropper** — stomp-hurts crawler; CloudDropper throws eggs that hatch.
-8. **Bill + Cannon** — straight projectile; fireproof; cannon silent if Cap adjacent.
-9. **Water fauna** — Swimfin (Cheep) + Inkjet (Blooper); land bridge leapers optional.
-10. **Lava Hopper (Podoboo)** — vertical jump from lava.
+1. **Red Shellbug**: turn at ledge edges (not walk off).
+2. **Vertical winged Shellbug**: up/down path; stomp → ground Shellbug.
+3. **Piranha proximity**: do not emerge if Cap is on/beside pipe.
+4. **Shell combo scoring**: escalating points while one shell slides.
+5. **Fireproof Beetle** (was skipped) ,  shell enemy immune to EmberShot; Hard Quest swaps Browncaps → Beetles.
+6. **Hammer Pair** (was skipped) ,  two throwers on block rows; optional chase after long on-screen time.
+7. **Spiny + egg + refined CloudDropper**: stomp-hurts crawler; CloudDropper throws eggs that hatch.
+8. **Bill + Cannon**: straight projectile; fireproof; cannon silent if Cap adjacent.
+9. **Water fauna**: Swimfin (Cheep) + Inkjet (Blooper); land bridge leapers optional.
+10. **Lava Hopper (Podoboo)**: vertical jump from lava.
 
-### Phase B — Power-ups / blocks
+### Phase B: Power-ups / blocks
 
-1. **Multi-coin block** — rapid bumps yield N coins then empty.
-2. **Smart mushroom block** — if Cap already tall/fire, spawn Ember Bloom instead of Big Berry.
-3. **Spring hold-for-max** — higher bounce if jump pressed at compression.
-4. **Star invincibility theme** — swap Music to `star` loop for duration.
+1. **Multi-coin block**: rapid bumps yield N coins then empty.
+2. **Smart mushroom block**: if Cap already tall/fire, spawn Ember Bloom instead of Big Berry.
+3. **Spring hold-for-max**: higher bounce if jump pressed at compression.
+4. **Star invincibility theme**: swap Music to `star` loop for duration.
 5. **Power-down / pipe SFX** distinct from hurt.
 
-### Phase C — Traversal / castle feel
+### Phase C: Traversal / castle feel
 
-1. **Duke flame** (W1–5) and **Duke hammer** (W6–7); **both** on W8 final.
+1. **Duke flame** (W1-5) and **Duke hammer** (W6-7); **both** on W8 final.
 2. **Balance lifts** and **falling lifts**.
 3. **Underwater current** in pits (pull down).
-4. **Flag fireworks** — if timer ones digit is 1/3/6, N fireworks × 500 pts.
+4. **Flag fireworks**: if timer ones digit is 1/3/6, N fireworks × 500 pts.
 5. **Crouch** while tall (pass short gaps).
 6. **Vine / beanstalk** optional sky bonus (replace skip if desired).
 
-### Phase D — Content / presentation
+### Phase D: Content / presentation
 
-1. Hand-author **W3–W8** landmark beats (less pure procedural).
+1. Hand-author **W3-W8** landmark beats (less pure procedural).
 2. Night / snow / castle-approach backgrounds per wiki world aesthetics.
 3. Hard Quest: Beetle swap + shorter lifts + enemy speed (already partial).
 4. Retainer / end screens with **original** copy (no Nintendo lines).
 5. SFX pack: jump, stomp, bump, coin, power, pipe, down, clear, hurry (original waveforms).
 
-### Phase E — Explicitly never from the wiki
+### Phase E: Explicitly never from the wiki
 
 - Nintendo character/product names in UI or store listing  
 - Official sprites, logos, level art, soundtrack files  
@@ -181,7 +181,7 @@
 
 | Artifact | Action |
 | --- | --- |
-| `features.csv` | Add Phase A–C rows; flip prior `skip` for beetle/hammer/vine when started |
+| `features.csv` | Add Phase A-C rows; flip prior `skip` for beetle/hammer/vine when started |
 | `smb-mechanics.md` | Sync checkpoint note (stage-start only per product choice) |
 | `test-plan.md` | New cases per shipped enemy / block |
 | `bugs.md` | Log regressions while implementing |
@@ -189,10 +189,19 @@
 
 ---
 
-## 5. Recommended next build
+## 5. Status (0.4.0)
 
-**Ship Phase A items 1–4 first** (red shell, vertical wing, piranha proximity, shell combo). Smallest diff, biggest “feels like SMB” jump, no new IP risk.
+| Phase A item | Status |
+| --- | --- |
+| 1 Cliffbug (ledge turn) | **Shipped** |
+| 2 Hoverbug (vertical) | **Shipped** |
+| 3 Piranha proximity | **Shipped** |
+| 4 Shell combo scoring | **Shipped** |
+| 5 Ashbug + Hard Quest swap | **Shipped** |
+| 6 Toss Twins | **Shipped** |
+| 7 Needler + egg via CloudDropper | **Shipped** |
+| 8 Iron Snout + Pipe Shot | **Shipped** |
+| 9 Swimfin + Inkjet | **Shipped** |
+| 10 Ember Blob | **Shipped** |
 
-Then A5–A10 enemies, then Phase B blocks/audio, then Phase C castle/lifts.
-
-Estimate of surface area: ~12–18 new/extended scripts + stage spawn hooks + features/test updates. Physics/tuning stays in `SmbTuning`.
+W3-W8 use paced original layouts (teach → mid → climax → stairs → flag/axe) with these foes. Phase B (multi-coin, smart mushroom, star theme, SFX pack) is next.

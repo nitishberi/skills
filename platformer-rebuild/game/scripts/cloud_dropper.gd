@@ -29,9 +29,16 @@ func _physics_process(delta: float) -> void:
 		_drop()
 
 func _drop() -> void:
-	var spike := FallingSpike.new()
-	spike.global_position = global_position + Vector2(0, 8)
-	get_tree().current_scene.add_child(spike)
+	# Alternate classic spike drop with Needler Eggs (wiki Lakitu → Spiny).
+	if int(Time.get_ticks_msec() / 100) % 2 == 0:
+		var egg := NeedlerEgg.new()
+		egg.global_position = global_position + Vector2(0, 8)
+		egg.velocity = Vector2(dir * 20.0, 40.0)
+		get_tree().current_scene.add_child(egg)
+	else:
+		var spike := FallingSpike.new()
+		spike.global_position = global_position + Vector2(0, 8)
+		get_tree().current_scene.add_child(spike)
 
 func stomp() -> void:
 	RunState.add_score(200)

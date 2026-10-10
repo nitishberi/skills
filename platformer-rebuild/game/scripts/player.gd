@@ -194,6 +194,10 @@ func _touch_enemy(enemy: Node2D, pre_vel_y: float, was_airborne: bool) -> void:
 		(enemy as Shellbug).stomp()
 		return
 	if _is_stomp(enemy, pre_vel_y, was_airborne):
+		# Needler / other spike crawlers: stomp is not safe.
+		if enemy.has_method("is_stomp_safe") and not enemy.is_stomp_safe():
+			_take_hit()
+			return
 		if enemy.has_method("stomp"):
 			enemy.stomp()
 			velocity.y = SmbTuning.JUMP_SMALL * SmbTuning.STOMP_BOUNCE

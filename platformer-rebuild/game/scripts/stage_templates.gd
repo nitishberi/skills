@@ -1,4 +1,6 @@
 extends RefCounted
+## Original Pipe Hop layouts: SMB *structure* (ground → under/water → athletic → castle)
+## with teaching beats (pits, pipes, stairs, flag/axe). No Nintendo map copies.
 
 const Catalog := preload("res://scripts/level_catalog.gd")
 
@@ -6,7 +8,7 @@ static func build(sc: Node, world: int, stage: int) -> void:
 	if Catalog.is_handcrafted(world, stage):
 		_build_handcrafted(sc, world, stage)
 	else:
-		_build_procedural(sc, world, stage)
+		_build_paced(sc, world, stage)
 
 static func _build_handcrafted(sc: Node, world: int, stage: int) -> void:
 	if world == 2 and stage == 2:
@@ -29,9 +31,11 @@ static func _build_handcrafted(sc: Node, world: int, stage: int) -> void:
 		"2-4":
 			sc.call("_build_level_2_4")
 		_:
-			_build_procedural(sc, world, stage)
+			_build_paced(sc, world, stage)
 
-static func _build_procedural(sc: Node, world: int, stage: int) -> void:
+## Paced procedural builder for W3–W8 (and fallbacks):
+## intro teach → mid obstacles → climax → staircase → flag/axe.
+static func _build_paced(sc: Node, world: int, stage: int) -> void:
 	var kind := Catalog.stage_kind(world, stage)
 	match kind:
 		"castle":
@@ -49,14 +53,36 @@ static func _build_ground(sc: Node, world: int, stage: int) -> void:
 	var w := Catalog.level_width_tiles(world, stage)
 	var pits := _pits(world, stage, w)
 	sc.call("_build_ground", w, pits)
-	for i in 3:
-		var bx := 8 + i * 2 + world % 3
-		sc.call("_add_question", Vector2(bx * 16, 240), _pick_item(world, stage, i))
-	sc.call("_add_question", Vector2((14 + world % 4) * 16, 240), QuestionBlock.Contents.ONE_UP if world % 3 == 0 else QuestionBlock.Contents.COIN)
+	# Intro teach: safe berry + coin row
+	sc.call("_add_question", Vector2(8 * 16, 240), QuestionBlock.Contents.BIG_BERRY)
+	sc.call("_add_question", Vector2(10 * 16, 240), QuestionBlock.Contents.COIN)
+	sc.call("_add_question", Vector2(12 * 16, 240), QuestionBlock.Contents.COIN)
+	# Mid: pipe + plant + cliffbug ledge lesson
+	var pipe_x := 20 + (world % 3) * 2
+	sc.call("_add_pipe", Vector2(pipe_x * 16, 288), false)
+	sc.call("_spawn_plant", Vector2(pipe_x * 16 + 16, 288))
+	sc.call("_spawn_cliffbug", Vector2((pipe_x + 6) * 16, 300))
+	# Mid power + ashbug / browncap
+	sc.call("_add_question", Vector2((28 + world % 4) * 16, 224), _pick_item(world, stage, 2))
+	sc.call("_spawn_browncap", Vector2((32 + stage) * 16, 300))
+	if world >= 4:
+		sc.call("_spawn_ashbug", Vector2((36 + stage) * 16, 300))
+	# Climax: cannon or toss twins
+	if world >= 5:
+		sc.call("_spawn_iron_snout", Vector2((44 + world) * 16, 304), -1.0)
+	if world >= 6 and stage == 1:
+		sc.call("_spawn_toss_twin", Vector2((48) * 16, 240))
+		sc.call("_add_brick", Vector2(47 * 16, 256))
+		sc.call("_add_brick", Vector2(48 * 16, 256))
+		sc.call("_add_brick", Vector2(49 * 16, 256))
+	if world >= 3:
+		sc.call("_spawn_hoverbug", Vector2((52 + stage) * 16, 220))
+	# Optional warp (SMB-style secret exits, original destinations)
 	if world == 3 and stage == 1:
 		sc.call("_add_warp", Vector2(58 * 16, 272), 4, 1)
-	sc.call("_add_pipe", Vector2((20 + world * 2) * 16, 288), world % 2 == 0)
-	_scatter_enemies(sc, world, stage, w)
+	if world == 5 and stage == 1:
+		sc.call("_add_warp", Vector2(62 * 16, 272), 6, 2)
+	_scatter_enemies(sc, world, stage, w, 0.85)
 	_stairs(sc, w - 12, 5)
 	sc.call("_spawn_goal", Vector2((w - 8) * 16, 320))
 
@@ -70,9 +96,15 @@ static func _build_under(sc: Node, world: int, stage: int) -> void:
 	sc.call("_add_question", Vector2(10 * 16, 240), QuestionBlock.Contents.COIN)
 	sc.call("_add_pipe", Vector2(16 * 16, 288), false)
 	sc.call("_spawn_plant", Vector2(16 * 16 + 16, 288))
+	sc.call("_spawn_cliffbug", Vector2(22 * 16, 300))
+	sc.call("_spawn_ashbug", Vector2(34 * 16, 300))
+	if world >= 4:
+		sc.call("_spawn_needler", Vector2(40 * 16, 300))
 	if world == 4 and stage == 2:
 		sc.call("_add_warp", Vector2(46 * 16, 240), 6, 1)
-	_scatter_enemies(sc, world, stage, w, 1.2)
+	if world >= 6:
+		sc.call("_spawn_iron_snout", Vector2(50 * 16, 304), -1.0)
+	_scatter_enemies(sc, world, stage, w, 1.1)
 	_stairs(sc, w - 10, 6)
 	sc.call("_spawn_goal", Vector2((w - 6) * 16, 320))
 
@@ -85,7 +117,14 @@ static func _build_water(sc: Node, world: int, stage: int) -> void:
 	sc.get_node("Entities").add_child(water)
 	sc.call("_add_question", Vector2(8 * 16, 200), QuestionBlock.Contents.BIG_BERRY)
 	sc.call("_add_question", Vector2(30 * 16, 180), QuestionBlock.Contents.EMBER_BLOOM)
-	_scatter_enemies(sc, world, stage, w, 0.9)
+	# Water fauna
+	sc.call("_spawn_swimfin", Vector2(18 * 16, 200))
+	sc.call("_spawn_swimfin", Vector2(36 * 16, 220))
+	sc.call("_spawn_inkjet", Vector2(48 * 16, 180))
+	if world >= 7:
+		sc.call("_spawn_swimfin", Vector2(60 * 16, 210))
+		sc.call("_spawn_inkjet", Vector2(70 * 16, 160))
+	_scatter_enemies(sc, world, stage, w, 0.5)
 	sc.call("_spawn_goal", Vector2((w - 8) * 16, 320))
 
 static func _build_athletic(sc: Node, world: int, stage: int) -> void:
@@ -99,9 +138,16 @@ static func _build_athletic(sc: Node, world: int, stage: int) -> void:
 	sc.call("_add_spring", Vector2(18 * 16, 256))
 	sc.call("_add_mover", Vector2(32 * 16, 240), Vector2(80, 0), 2.8 - world * 0.05)
 	sc.call("_add_mover", Vector2(52 * 16, 200), Vector2(0, 48), 2.2)
+	sc.call("_spawn_hoverbug", Vector2(28 * 16, 200))
+	sc.call("_spawn_cliffbug", Vector2(44 * 16, 300))
 	if world >= 5:
 		sc.call("_spawn_cloud", Vector2(60 * 16, 120))
-	_scatter_enemies(sc, world, stage, w, 1.1, true)
+		sc.call("_spawn_needler", Vector2(64 * 16, 300))
+	if world >= 6:
+		sc.call("_spawn_toss_twin", Vector2(70 * 16, 240))
+		for x in range(69, 72):
+			sc.call("_add_brick", Vector2(x * 16, 256))
+	_scatter_enemies(sc, world, stage, w, 1.0, true)
 	_stairs(sc, w - 10, 4 + world % 3)
 	sc.call("_spawn_goal", Vector2((w - 6) * 16, 320))
 
@@ -114,10 +160,16 @@ static func _build_castle(sc: Node, world: int, stage: int) -> void:
 	sc.call("_add_question", Vector2(8 * 16, 200), QuestionBlock.Contents.EMBER_BLOOM)
 	sc.call("_spawn_fire_bar", Vector2(16 * 16, 260), 4 + world % 3, 1.4 + world * 0.05)
 	sc.call("_spawn_fire_bar", Vector2(28 * 16, 240), 5 + world % 2, -1.5)
+	sc.call("_spawn_ashbug", Vector2(20 * 16, 300))
 	var lava := LavaHazard.new()
 	lava.configure(14 + world, 2)
 	lava.position = Vector2(36 * 16, 320)
 	sc.get_node("Entities").add_child(lava)
+	# Ember Blobs hop from lava (Podoboo role)
+	sc.call("_spawn_ember_blob", Vector2(40 * 16, 320))
+	sc.call("_spawn_ember_blob", Vector2(46 * 16, 320))
+	if world >= 6:
+		sc.call("_spawn_ember_blob", Vector2(42 * 16, 320))
 	var bridge: Array = []
 	for x in range(36, 50 + world / 2):
 		bridge.append(sc.call("_add_solid_ref", Vector2(x * 16, 288), Color("7f8c8d")))
@@ -174,10 +226,29 @@ static func _scatter_enemies(sc: Node, world: int, stage: int, width: int, densi
 	for i in n:
 		var s := Catalog.seed(world, stage, 40 + i)
 		var x := (8 + (s % (width - 16))) * 16
-		if i % 2 == 0:
-			sc.call("_spawn_browncap", Vector2(x, 300))
-		else:
-			sc.call("_spawn_shellbug", Vector2(x, 300), winged and i % 3 == 0)
+		var roll := s % 7
+		match roll:
+			0, 1:
+				sc.call("_spawn_browncap", Vector2(x, 300))
+			2:
+				sc.call("_spawn_shellbug", Vector2(x, 300), winged and i % 3 == 0)
+			3:
+				sc.call("_spawn_cliffbug", Vector2(x, 300))
+			4:
+				if world >= 4:
+					sc.call("_spawn_ashbug", Vector2(x, 300))
+				else:
+					sc.call("_spawn_browncap", Vector2(x, 300))
+			5:
+				if world >= 5:
+					sc.call("_spawn_needler", Vector2(x, 300))
+				else:
+					sc.call("_spawn_shellbug", Vector2(x, 300), false)
+			_:
+				if winged:
+					sc.call("_spawn_hoverbug", Vector2(x, 220))
+				else:
+					sc.call("_spawn_shellbug", Vector2(x, 300), false)
 
 static func _stairs(sc: Node, base_x: int, steps: int) -> void:
 	for i in range(steps):

@@ -90,12 +90,24 @@ func _build_all() -> void:
 	_tex["browncap"] = _t(_draw_browncap())
 	_tex["shellbug"] = _t(_draw_shellbug(false))
 	_tex["shellbug_shell"] = _t(_draw_shellbug(true))
+	_tex["cliffbug"] = _t(_draw_cliffbug(false))
+	_tex["ashbug"] = _t(_draw_ashbug(false))
+	_tex["ashbug_shell"] = _t(_draw_ashbug(true))
 	_tex["wing"] = _t(_draw_wing())
 	_tex["duke_fake"] = _t(_draw_duke(false))
 	_tex["duke_final"] = _t(_draw_duke(true))
 	_tex["plant"] = _t(_draw_plant())
 	_tex["cloud"] = _t(_draw_cloud())
 	_tex["spike"] = _t(_draw_spike())
+	_tex["needler"] = _t(_draw_needler())
+	_tex["needler_egg"] = _t(_draw_needler_egg())
+	_tex["cannon"] = _t(_draw_cannon())
+	_tex["pipe_shot"] = _t(_draw_pipe_shot())
+	_tex["swimfin"] = _t(_draw_swimfin())
+	_tex["inkjet"] = _t(_draw_inkjet())
+	_tex["ember_blob"] = _t(_draw_ember_blob())
+	_tex["toss_twin"] = _t(_draw_toss_twin())
+	_tex["hammer"] = _t(_draw_hammer())
 	_tex["spring"] = _t(_draw_spring())
 	_tex["mover"] = _t(_draw_mover())
 	_tex["ember_shot"] = _t(_draw_ember_shot())
@@ -268,6 +280,94 @@ func _draw_shellbug(shell: bool) -> Image:
 		_px(img, 11, 7, Color("264653"))
 		_rect(img, 1, 8, 3, 3, Color("2f6f4e"))
 		_rect(img, 12, 8, 3, 3, Color("2f6f4e"))
+	return img
+
+func _draw_cliffbug(_shell: bool) -> Image:
+	var img := _img(16, 14)
+	_rect(img, 2, 5, 12, 7, Color("c0392b"))
+	_px(img, 10, 7, Color("fff"))
+	_px(img, 11, 7, Color("264653"))
+	_rect(img, 1, 8, 3, 3, Color("922b21"))
+	_rect(img, 12, 8, 3, 3, Color("922b21"))
+	return img
+
+func _draw_ashbug(shell: bool) -> Image:
+	var img := _img(16, 14)
+	if shell:
+		_rect(img, 1, 4, 14, 8, Color("566573"))
+		for i in 4:
+			_px(img, 3 + i * 3, 6, Color("2c3e50"))
+	else:
+		_rect(img, 2, 5, 12, 7, Color("7f8c8d"))
+		_px(img, 10, 7, Color("fff"))
+		_px(img, 11, 7, Color("1c2833"))
+		_rect(img, 1, 8, 3, 3, Color("5d6d7e"))
+		_rect(img, 12, 8, 3, 3, Color("5d6d7e"))
+	return img
+
+func _draw_needler() -> Image:
+	var img := _img(16, 14)
+	_rect(img, 2, 6, 12, 6, Color("e74c3c"))
+	_px(img, 4, 4, Color("922b21"))
+	_px(img, 8, 3, Color("922b21"))
+	_px(img, 12, 4, Color("922b21"))
+	_px(img, 10, 8, Color("fff"))
+	return img
+
+func _draw_needler_egg() -> Image:
+	var img := _img(10, 10)
+	_rect(img, 2, 2, 6, 6, Color("f5b7b1"))
+	_px(img, 4, 4, Color("922b21"))
+	return img
+
+func _draw_cannon() -> Image:
+	var img := _img(16, 18)
+	_rect(img, 2, 6, 12, 12, Color("2c3e50"))
+	_rect(img, 0, 8, 6, 6, Color("1c2833"))
+	return img
+
+func _draw_pipe_shot() -> Image:
+	var img := _img(12, 10)
+	_rect(img, 0, 2, 10, 6, Color("2c3e50"))
+	_rect(img, 8, 1, 4, 8, Color("1c2833"))
+	_px(img, 2, 4, Color("ecf0f1"))
+	return img
+
+func _draw_swimfin() -> Image:
+	var img := _img(18, 12)
+	_rect(img, 2, 3, 12, 6, Color("e67e22"))
+	_rect(img, 12, 4, 5, 4, Color("d35400"))
+	_px(img, 5, 5, Color("fff"))
+	return img
+
+func _draw_inkjet() -> Image:
+	var img := _img(14, 18)
+	_rect(img, 3, 2, 8, 8, Color("5dade2"))
+	_rect(img, 4, 10, 2, 6, Color("2874a6"))
+	_rect(img, 8, 10, 2, 6, Color("2874a6"))
+	_px(img, 5, 5, Color("fff"))
+	_px(img, 9, 5, Color("fff"))
+	return img
+
+func _draw_ember_blob() -> Image:
+	var img := _img(14, 14)
+	_rect(img, 3, 3, 8, 8, Color("e74c3c"))
+	_rect(img, 5, 1, 4, 4, Color("f5b041"))
+	return img
+
+func _draw_toss_twin() -> Image:
+	var img := _img(16, 20)
+	_rect(img, 3, 6, 10, 12, Color("1abc9c"))
+	_rect(img, 5, 2, 6, 6, Color("16a085"))
+	_px(img, 7, 4, Color("fff"))
+	_rect(img, 1, 14, 4, 4, Color("117a65"))
+	_rect(img, 11, 14, 4, 4, Color("117a65"))
+	return img
+
+func _draw_hammer() -> Image:
+	var img := _img(10, 10)
+	_rect(img, 3, 0, 4, 7, Color("7f8c8d"))
+	_rect(img, 1, 0, 8, 3, Color("566573"))
 	return img
 
 func _draw_wing() -> Image:
