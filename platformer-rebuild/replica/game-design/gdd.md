@@ -1,5 +1,7 @@
 # Pipe Hop GDD (personal)
 
+Eight worlds, four stages each (32 levels). Stage types follow Super Mario Bros. (ground / under / water / athletic / castle) with original geometry and Pipe Hop branding.
+
 ## Pillars
 
 1. Readable run-and-jump timing

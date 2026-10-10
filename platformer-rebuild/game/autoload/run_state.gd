@@ -5,6 +5,7 @@ signal changed
 const START_LIVES := 3
 const START_TIME := 400
 const STAGES_PER_WORLD := 4
+const MAX_WORLDS := 8
 
 var lives: int = START_LIVES
 var score: int = 0
@@ -99,26 +100,7 @@ func world_stage_label() -> String:
 	return "%s%d-%d" % [tag, world, stage]
 
 func scene_for_current_stage() -> String:
-	var key := "%d-%d" % [world, stage]
-	match key:
-		"1-1":
-			return "res://scenes/level_1_1.tscn"
-		"1-2":
-			return "res://scenes/level_1_2.tscn"
-		"1-3":
-			return "res://scenes/level_1_3.tscn"
-		"1-4":
-			return "res://scenes/level_1_4.tscn"
-		"2-1":
-			return "res://scenes/level_2_1.tscn"
-		"2-2":
-			return "res://scenes/level_2_2.tscn"
-		"2-3":
-			return "res://scenes/level_2_3.tscn"
-		"2-4":
-			return "res://scenes/level_2_4.tscn"
-		_:
-			return "res://scenes/level_1_1.tscn"
+	return "res://scenes/level_play.tscn"
 
 func advance_stage() -> void:
 	last_clear_time_bonus = int(time_left) * 10
@@ -127,6 +109,23 @@ func advance_stage() -> void:
 	if stage > STAGES_PER_WORLD:
 		stage = 1
 		world += 1
+	if world > MAX_WORLDS:
+		world = MAX_WORLDS
+		stage = STAGES_PER_WORLD
+	changed.emit()
+
+func on_world_castle_cleared() -> void:
+	last_clear_time_bonus = int(time_left) * 10
+	add_score(last_clear_time_bonus + 5000)
+	world_cleared_once = true
+	changed.emit()
+
+func advance_to_next_world() -> void:
+	if world >= MAX_WORLDS:
+		return
+	world += 1
+	stage = 1
+	reset_stage_timer()
 	changed.emit()
 
 func apply_continue() -> void:

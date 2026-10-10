@@ -2,6 +2,8 @@ extends Node2D
 
 const TILE := 16
 const FxScript := preload("res://scripts/fx.gd")
+const Catalog := preload("res://scripts/level_catalog.gd")
+const Templates := preload("res://scripts/stage_templates.gd")
 
 @export var level_id: String = "1-1"
 
@@ -14,6 +16,7 @@ var _active_world_item: Node = null
 var _next_checkpoint_x: float = 280.0
 
 func _ready() -> void:
+	level_id = "%d-%d" % [RunState.world, RunState.stage]
 	_build_level()
 	Music.play_theme(_music_theme())
 	var spawn := Vector2(48, 320)
@@ -63,24 +66,12 @@ func _spawn_player(pos: Vector2) -> CapPlayer:
 
 func _build_level() -> void:
 	_clear_world()
+	var w := RunState.world
+	var st := RunState.stage
+	level_id = "%d-%d" % [w, st]
+	Catalog.apply_sky(w, st)
 	_add_parallax(_music_theme())
-	match level_id:
-		"1-2":
-			_build_level_1_2()
-		"1-3":
-			_build_level_1_3()
-		"1-4":
-			_build_level_1_4()
-		"2-1":
-			_build_level_2_1()
-		"2-2":
-			_build_level_2_2()
-		"2-3":
-			_build_level_2_3()
-		"2-4":
-			_build_level_2_4()
-		_:
-			_build_level_1_1()
+	Templates.build(self, w, st)
 	if RunState.hard_quest:
 		_apply_hard_quest()
 
@@ -312,15 +303,7 @@ func _clear_world() -> void:
 		c.queue_free()
 
 func _music_theme() -> String:
-	match level_id:
-		"1-2":
-			return "under"
-		"2-1":
-			return "water"
-		"1-4", "2-4":
-			return "castle"
-		_:
-			return "overworld"
+	return Catalog.music_theme(RunState.world, RunState.stage)
 
 func _add_parallax(theme: String) -> void:
 	var bg := ParallaxBackground.new()
@@ -637,9 +620,7 @@ func _on_world_cleared() -> void:
 	_cleared = true
 	get_tree().paused = false
 	Sfx.play("clear")
-	RunState.last_clear_time_bonus = int(RunState.time_left) * 10
-	RunState.add_score(RunState.last_clear_time_bonus + 5000)
-	RunState.world_cleared_once = true
+	RunState.on_world_castle_cleared()
 	RenderingServer.set_default_clear_color(Color("7ec8e3"))
 	await get_tree().create_timer(0.8).timeout
 	get_tree().change_scene_to_file("res://scenes/world_clear.tscn")

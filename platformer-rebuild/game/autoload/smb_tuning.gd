@@ -5,18 +5,19 @@ const STAGE_TIME_DISPLAY := 400
 const TIMER_UNITS_PER_SECOND := 2.5
 const TIMER_HURRY_BELOW := 100
 
-const WALK_MAX := 96.0
-const RUN_MAX := 158.0
-const GROUND_ACCEL := 680.0
-const GROUND_DECEL := 520.0
-const AIR_ACCEL := 400.0
-const AIR_DECEL := 200.0
+# Tuned toward NES SMB horizontal/jump ratios (px/s at 60 Hz, 16px tiles).
+const WALK_MAX := 88.0
+const RUN_MAX := 152.0
+const GROUND_ACCEL := 620.0
+const GROUND_DECEL := 480.0
+const AIR_ACCEL := 360.0
+const AIR_DECEL := 180.0
 
-const GRAVITY := 1000.0
-const MAX_FALL := 450.0
-const JUMP_SMALL := -300.0
-const JUMP_RUN_BONUS := -48.0
-const JUMP_CUT := 0.5
+const GRAVITY := 920.0
+const MAX_FALL := 440.0
+const JUMP_SMALL := -294.0
+const JUMP_RUN_BONUS := -52.0
+const JUMP_CUT := 0.48
 const COYOTE := 0.09
 const JUMP_BUFFER := 0.11
 

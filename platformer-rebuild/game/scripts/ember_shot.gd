@@ -1,12 +1,14 @@
 extends Area2D
 class_name EmberShot
 
-const SPEED := 220.0
-const LIFE := 2.2
+const SPEED := 168.0
+const LIFE := 2.4
+const GRAVITY := 420.0
 
 var dir: float = 1.0
 var life: float = LIFE
 var bounced: int = 0
+var _ground_y: float = 336.0
 
 func _ready() -> void:
 	add_to_group("ember_shots")
@@ -22,9 +24,14 @@ func _physics_process(delta: float) -> void:
 		queue_free()
 		return
 	position.x += dir * SPEED * delta
-	position.y += 40.0 * delta
-	if position.y > 400.0:
-		queue_free()
+	position.y += GRAVITY * delta
+	if position.y >= _ground_y:
+		position.y = _ground_y
+		if bounced == 0:
+			dir *= -1.0
+		bounced += 1
+		if bounced > 4:
+			queue_free()
 
 func _on_body(body: Node) -> void:
 	if body.is_in_group("enemies"):
@@ -36,10 +43,9 @@ func _on_body(body: Node) -> void:
 		queue_free()
 		return
 	if body is StaticBody2D:
-		bounced += 1
 		dir *= -1.0
-		position.y -= 6.0
-		if bounced > 3:
+		bounced += 1
+		if bounced > 5:
 			queue_free()
 
 func _on_area(area: Area2D) -> void:

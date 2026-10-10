@@ -25,9 +25,8 @@ Godot **4.3+**. On macOS: Import `game/project.godot` → Play.
 
 ## Content
 
-**World 1:** overworld → under → athletic (springs, movers, Spark Star, cloud dropper) → castle (fire-bars, lava, Duke Spikes).  
-**World 2:** underwater → pipes/plants → sky drops → harder castle.  
-Secret **warp** on 1-1 near the stairs → World 2. Hidden blocks, 1-Up, bonus pipe room, stage-clear tally, pause, continue, Hard Quest.
+**8 worlds × 4 stages** (SMB-style types: ground, underground, underwater on W2-2 and W7-2, athletic, castle). Worlds 1–2 use handcrafted layouts; worlds 3–8 are generated from the same type rules with rising difficulty.  
+Secret **warp** on 1-1 → World 2; underground warps on select stages. Bonus pipe room, flagpole height score, checkpoints, pause, continue, **Hard Quest** (faster foes). Beat **W8-4** to finish.
 
 ## Polish
 

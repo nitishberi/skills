@@ -25,7 +25,7 @@ Evidence: [Super Mario Bros. on Mario Wiki](https://www.mariowiki.com/Super_Mari
 
 ## Still original / abbreviated
 
-- **2 worlds × 4 stages** (not 8×4); layouts are original teaching beats, not official maps.
+- **8 worlds × 4 stages** (32 levels): SMB **stage types** per world (ground / under or water / athletic / castle), **original** procedural + handcrafted layouts, not official maps.
 - **Branding**: Cap, Browncap, Duke Spikes, Pipe Hop audio/art.
 - **2-player alternate**, vine beanstalk, exact NES frame data: not ported.
 
