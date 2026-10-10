@@ -33,11 +33,16 @@ Secret **warp** on 1-1 near the stairs → World 2. Hidden blocks, 1-Up, bonus p
 
 Cap, Browncap, Shellbug, Big Berry, Ember Bloom, Spark Star, One-Up berry, Duke Spikes, HazardPlant, CloudDropper.
 
-## macOS export
+## Exports
 
-1. Editor → Manage Export Templates (install for your Godot version).  
-2. Project → Export → **macOS** (preset in `export_presets.cfg`).  
-3. Output: `build/PipeHop.app`.
+Presets live in `game/export_presets.cfg` (Godot 4.3 export templates required).
+
+| Target | Command / UI | Output |
+| --- | --- | --- |
+| macOS | Project → Export → **macOS**, or `godot --headless --path game --export-release "macOS" ../build/PipeHop.app` | `build/PipeHop.app`, zip as `build/PipeHop-macOS.zip` |
+| Linux x86_64 | Project → Export → **Linux**, or `godot --headless --path game --export-release "Linux" ../build/PipeHop.x86_64` | `build/PipeHop.x86_64` + `build/PipeHop.pck` |
+
+On a Mac: unzip `PipeHop-macOS.zip`, open `PipeHop.app` (unsigned; right-click → Open if Gatekeeper blocks). On Linux: `./PipeHop.x86_64` next to the `.pck`.
 
 ## Replica notes
 
