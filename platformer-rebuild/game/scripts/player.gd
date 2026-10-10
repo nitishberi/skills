@@ -118,8 +118,11 @@ func _physics_process(delta: float) -> void:
 	if is_on_floor():
 		velocity += get_platform_velocity()
 
+	# Capture fall state BEFORE slide (slide zeros velocity.y on "floor" enemies).
+	var pre_vel_y := velocity.y
+	var was_airborne := not is_on_floor()
 	move_and_slide()
-	_resolve_collisions()
+	_resolve_collisions(pre_vel_y, was_airborne)
 	_refresh_sprite(delta)
 
 	if global_position.y > 420.0:
@@ -142,14 +145,14 @@ func _try_shoot_ember() -> void:
 	shot.global_position = global_position + Vector2(facing * 10.0, -12.0)
 	get_tree().current_scene.add_child(shot)
 
-func _resolve_collisions() -> void:
+func _resolve_collisions(pre_vel_y: float, was_airborne: bool) -> void:
 	for i in get_slide_collision_count():
 		var col := get_slide_collision(i)
 		var collider := col.get_collider()
 		if collider == null:
 			continue
 		var normal := col.get_normal()
-		if normal.y > 0.5 and velocity.y < 0.0:
+		if normal.y > 0.5 and pre_vel_y < 0.0:
 			if collider.has_method("bump_from_below") and (
 				collider.is_in_group("question_blocks")
 				or collider.is_in_group("hidden_blocks")
@@ -157,7 +160,7 @@ func _resolve_collisions() -> void:
 			):
 				collider.bump_from_below()
 		if collider.is_in_group("enemies"):
-			_touch_enemy(collider, normal)
+			_touch_enemy(collider as Node2D, pre_vel_y, was_airborne)
 		elif collider.is_in_group("hazards"):
 			_die()
 		elif collider.is_in_group("pickups"):
@@ -167,20 +170,30 @@ func _resolve_collisions() -> void:
 			if collider.has_method("activate"):
 				collider.activate(self)
 
-func _touch_enemy(enemy: Node, normal: Vector2) -> void:
+func _is_stomp(enemy: Node2D, pre_vel_y: float, was_airborne: bool) -> bool:
+	# SMB-style: falling onto an enemy whose body is below Cap's feet.
+	# Do not trust slide normals alone (CharacterBody vs CharacterBody is noisy).
+	if enemy.is_in_group("duke_spikes"):
+		return false
+	if in_water:
+		return false
+	var falling := pre_vel_y > 20.0 or (was_airborne and pre_vel_y >= 0.0)
+	if not falling:
+		return false
+	# Both origins are feet. Stomp if Cap's feet are clearly above the enemy's feet.
+	return global_position.y < enemy.global_position.y - 2.0
+
+func _touch_enemy(enemy: Node2D, pre_vel_y: float, was_airborne: bool) -> void:
 	if RunState.invuln_timer > 0.0:
 		if enemy.has_method("hit_by_ember"):
 			enemy.hit_by_ember()
 		elif enemy.has_method("stomp"):
 			enemy.stomp()
 		return
-	if enemy.is_in_group("duke_spikes"):
-		_take_hit()
+	if enemy is Shellbug and (enemy as Shellbug).is_shell_idle():
+		(enemy as Shellbug).stomp()
 		return
-	if in_water:
-		_take_hit()
-		return
-	if normal.y < -0.5 and velocity.y >= 0.0:
+	if _is_stomp(enemy, pre_vel_y, was_airborne):
 		if enemy.has_method("stomp"):
 			enemy.stomp()
 			velocity.y = SmbTuning.JUMP_SMALL * SmbTuning.STOMP_BOUNCE
@@ -188,9 +201,6 @@ func _touch_enemy(enemy: Node, normal: Vector2) -> void:
 			Sfx.play("stomp")
 			_shake(3.0)
 			FxScript.stomp_dust(get_tree().current_scene, global_position)
-		return
-	if enemy is Shellbug and (enemy as Shellbug).is_shell_idle():
-		(enemy as Shellbug).stomp()
 		return
 	_take_hit()
 

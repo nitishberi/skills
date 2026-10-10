@@ -19,12 +19,13 @@ func _ready() -> void:
 	level_id = "%d-%d" % [RunState.world, RunState.stage]
 	_build_level()
 	Music.play_theme(_music_theme())
-	var spawn := Vector2(48, 320)
+	# Ground tile tops sit at y=320. Spawn feet slightly above so Cap drops onto the path.
+	var spawn := Vector2(64, 304)
 	if RunState.use_pipe_spawn and RunState.pipe_return_pos != Vector2.ZERO:
-		spawn = RunState.pipe_return_pos
+		spawn = Vector2(RunState.pipe_return_pos.x, mini(RunState.pipe_return_pos.y, 304.0))
 		RunState.use_pipe_spawn = false
 	elif RunState.has_checkpoint:
-		spawn = Vector2(RunState.checkpoint_pos.x, 320)
+		spawn = Vector2(RunState.checkpoint_pos.x, 304)
 	player = _spawn_player(spawn)
 	player.died.connect(_on_player_died)
 	var camera := $Camera2D
@@ -556,7 +557,8 @@ func _spawn_browncap(pos: Vector2) -> void:
 	shape.shape = rect
 	shape.position = Vector2(0, -7)
 	e.add_child(shape)
-	e.position = pos
+	# Keep feet on / just above ground top (y=320).
+	e.position = Vector2(pos.x, mini(pos.y, 304.0))
 	entities.add_child(e)
 
 func _spawn_shellbug(pos: Vector2, winged: bool = false) -> void:
@@ -570,7 +572,7 @@ func _spawn_shellbug(pos: Vector2, winged: bool = false) -> void:
 	shape.shape = rect
 	shape.position = Vector2(0, -6)
 	e.add_child(shape)
-	e.position = pos
+	e.position = Vector2(pos.x, mini(pos.y, 304.0))
 	entities.add_child(e)
 
 func _spawn_goal(pos: Vector2) -> void:

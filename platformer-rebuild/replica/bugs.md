@@ -22,6 +22,8 @@ Severity: **S1** crash/blocker, **S2** wrong rules/score/lives, **S3** feel/coll
 
 | id | severity | note |
 | --- | --- | --- |
+| B08 | S1 | Cap sprite drawn below feet (Art.make_sprite offset); looked off the path; fixed (2026-10-10) |
+| B09 | S1 | Stomp used slide normals; landing on enemy killed Cap; position+fall check (2026-10-10) |
 | B04 | S2 | Hidden blocks ignored head bumps; fixed in `player.gd` (2026-10-10) |
 | B05 | S3 | Spawn Y above ground (304 vs 320); fixed (2026-10-10) |
 | B06 | S3 | Spark Star left tint after invuln; reset modulate (2026-10-10) |

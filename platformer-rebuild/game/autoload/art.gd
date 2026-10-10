@@ -13,9 +13,14 @@ func make_sprite(key: String, centered_bottom: bool = true) -> Sprite2D:
 	var s := Sprite2D.new()
 	s.texture = texture(key)
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	s.centered = false
+	var sz := s.texture.get_size()
 	if centered_bottom:
-		var sz := s.texture.get_size()
-		s.offset = Vector2(sz.x * 0.5, sz.y)
+		# Feet / bottom-center at the node's origin (matches CharacterBody2D feet).
+		s.offset = Vector2(-sz.x * 0.5, -sz.y)
+	else:
+		# Top-left at origin (tiles placed at tile corner).
+		s.offset = Vector2.ZERO
 	return s
 
 func tile_key_for_color(c: Color) -> String:
