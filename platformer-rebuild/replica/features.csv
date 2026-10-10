@@ -1,0 +1,59 @@
+feature,area,priority,original,clone,notes
+Horizontal run with variable speed,movement,must,yes,yes,Cap walk/run
+Variable-height jump,movement,must,yes,yes,jump cut + coyote/buffer + SFX
+Crouch while tall/fire,movement,must,yes,yes,shrink hitbox; stop walk
+Right-only camera scroll,camera,must,yes,yes,right_camera + shake
+Stomp defeats walker enemies,combat,must,yes,yes,Mudbit (was Browncap)
+Shell stun then kick + wake timer,combat,must,yes,yes,Coilbug
+Red ledge-turning shell,combat,must,yes,yes,Cliffbug
+Vertical / hop winged shells,combat,must,yes,yes,Hoverbug / Hopcoil
+Shell bulldozer combo to 1-up,combat,must,yes,yes,100..8000 then life
+Fireproof shell + Hard Mode swap,combat,must,yes,yes,Ashbug
+Hammer thrower pair + chase,combat,must,yes,yes,Toss Twins after 100 timer units
+Spiky crawler + egg,combat,must,yes,yes,Needler / Needler Egg
+Sky Rider follow eggs respawn,combat,must,yes,yes,stops at flag
+Pipe Chomp proximity + fire KO,combat,must,yes,yes,
+Cannon + fireproof shot,combat,must,yes,yes,Iron Snout / Pipe Shot
+Water fish and squid,combat,must,yes,yes,Swimfin / Inkjet
+Lava hopper,combat,must,yes,yes,Ember Blob
+Pit falls cost a life,hazards,must,yes,yes,
+Timer per stage; time out costs a life,hazards,must,yes,yes,400 @ 2.5x; hurry <100
+Grow power: taller form survives one hit,power-ups,must,yes,yes,Rise Melon
+Smart mushroom→flower when tall/fire,power-ups,must,yes,yes,
+Small + flower → tall only,power-ups,must,yes,yes,
+Tall form can break empty bricks from below,power-ups,must,yes,yes,BreakableBrick
+Fire power: projectile attack,power-ups,must,yes,yes,Blaze Bud + Ember Shot; max 2
+Invuln star: timed contact defeat + theme,power-ups,must,yes,yes,Zap Star ~10s
+Question and brick blocks; bump from below,blocks,must,yes,yes,
+Multi-coin Coin Crate,blocks,must,yes,yes,MULTI_COIN window
+Hidden blocks revealed when bumped,blocks,must,yes,yes,
+Coins 200 pts and 100-coin extra life,collectibles,must,yes,yes,
+1-Up pickup grants a life,collectibles,must,yes,yes,Extra Melon
+Power-up touch awards 1000,scoring,must,yes,yes,
+Lives counter; death restarts stage start,lives,must,yes,yes,
+Game over at zero lives,lives,must,yes,yes,
+Multi-world 32-stage campaign wiki types,levels,must,yes,yes,exact W1-W8 kinds; denser maps
+Stage clear flag height + fireworks 1/3/6,levels,must,yes,yes,
+Castle lava fire-bar axe boss,levels,must,yes,yes,
+Duke flame W1-5 hammers W6-7 both W8,bosses,must,yes,yes,
+Final world true boss vs impostors,bosses,must,yes,yes,5000 on defeat
+HUD score coins world-stage time,ui,must,yes,yes,0.5.0
+Title screen and start,ui,must,yes,yes,PIPE HOP
+Pipe enter bonus / shortcut rooms,levels,should,yes,yes,pipe SFX
+Warp zones to later worlds,levels,should,yes,yes,
+Underwater swim stages,levels,should,yes,yes,W2-2 W7-2
+Pause overlay,ui,should,yes,yes,
+Continue from current world after game over,lives,should,yes,yes,press C
+Hard quest beetles faster short lifts,meta,should,yes,yes,
+Spring hold-for-max,levels,should,yes,yes,Hop Pad
+Distinct power-down SFX,audio,should,yes,yes,
+Vine Sky Stem,levels,could,yes,skip,Phase C
+Balance / falling lifts,levels,could,yes,partial,MovingPlatform only
+Underwater current pull,levels,could,yes,skip,Phase C
+Alternating two-player mode,multiplayer,could,yes,skip,out of slice
+Nintendo character names and likenesses,ip,must,yes,skip,nintendo_ip
+Nintendo logos sprites and level art,ip,must,yes,skip,nintendo_ip
+Nintendo music and sound effects,ip,must,yes,skip,nintendo_ip
+Nintendo product title in code UI or store listing,ip,must,yes,skip,nintendo_ip
+Byte-identical official level maps,ip,must,yes,skip,nintendo_ip
+NES ROM or binary port to macOS,ip,must,yes,skip,nintendo_ip

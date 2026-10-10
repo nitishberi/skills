@@ -1,0 +1,51 @@
+[gd_scene load_steps=2 format=3 uid="uid://pipehop_title"]
+
+[ext_resource type="Script" path="res://scripts/title.gd" id="1"]
+
+[node name="Title" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Bg" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.494, 0.784, 0.89, 1)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Center"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="TitleLabel" type="Label" parent="Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.973, 0.949, 0.878, 1)
+theme_override_colors/font_outline_color = Color(0.149, 0.275, 0.325, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 40
+text = "PIPE HOP"
+horizontal_alignment = 1
+
+[node name="Sub" type="Label" parent="Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.353, 0.239, 0.169, 1)
+theme_override_font_sizes/font_size = 16
+text = "8 WORLDS  ·  BUILD 0.3.2
+Classic moves. Original names and look.
+Press Enter or Space"
+horizontal_alignment = 1

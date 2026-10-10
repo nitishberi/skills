@@ -1,0 +1,6 @@
+{
+  "name": "Pipe Hop",
+  "avoid": ["Mario", "Super Mario", "Luigi", "Bowser", "Goomba", "Koopa", "Nintendo", "Mushroom Kingdom", "Princess Peach", "Toad"],
+  "domains": ["mario.com", "nintendo.com", "supermariobros.com"],
+  "colors": ["#e52521", "#049cd8", "#43b047", "#fbd000"]
+}
