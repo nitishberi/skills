@@ -39,3 +39,4 @@
 - 2026-10-09: replica stage artifacts completed; parity 100; brand sweep clean
 - 2026-10-10: polish pass: `Art`/`Music` autoloads, sprites, parallax, exports rebuilt
 - 2026-10-10: SMB1 feel pass: `smb_tuning.gd`, `smb-mechanics.md` (Mario Wiki–aligned rules, clean-room)
+- 2026-10-10: Wiki deep dive → `wiki-gap-plan.md` (enemies/items/objects/soundtrack gaps + phases)

@@ -19,7 +19,7 @@ Evidence: [Super Mario Bros. on Mario Wiki](https://www.mariowiki.com/Super_Mari
 | Underwater: no stomp KOs | `in_water` branch in `player.gd` |
 | Max 2 fireballs | `MAX_FIREBALLS` |
 | Flagpole height score | `GoalFlag` + `SmbTuning.flagpole_bonus` |
-| Mid-level checkpoint respawn | `RunState.checkpoint_*` |
+| Mid-level checkpoint respawn | Removed by product choice: death → stage start |
 | Castle axe / fire on boss | `AxeGoal`, ember hits on Duke |
 | Warp, pipe bonus | warp zone, bonus room |
 
