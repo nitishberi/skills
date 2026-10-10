@@ -9,6 +9,8 @@ var dead: bool = false
 
 func _ready() -> void:
 	add_to_group("enemies")
+	if RunState.hard_quest:
+		set_meta("speed_mul", SmbTuning.HARD_ENEMY_SPEED_MUL)
 	var s := Art.make_sprite("browncap", true)
 	add_child(s)
 
@@ -17,7 +19,8 @@ func _physics_process(delta: float) -> void:
 		return
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
-	velocity.x = dir * SPEED
+	var mul := float(get_meta("speed_mul", 1.0))
+	velocity.x = dir * SPEED * mul
 	move_and_slide()
 	if is_on_wall():
 		dir *= -1.0

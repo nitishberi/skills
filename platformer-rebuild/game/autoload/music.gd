@@ -2,6 +2,7 @@ extends Node
 
 var _player: AudioStreamPlayer
 var _theme := ""
+var _hurry := false
 
 func _ready() -> void:
 	_player = AudioStreamPlayer.new()
@@ -18,7 +19,15 @@ func play_theme(name: String) -> void:
 
 func stop() -> void:
 	_theme = ""
+	_hurry = false
+	_player.pitch_scale = 1.0
 	_player.stop()
+
+func set_hurry(on: bool) -> void:
+	if on == _hurry:
+		return
+	_hurry = on
+	_player.pitch_scale = 1.18 if on else 1.0
 
 func _make_loop(name: String) -> AudioStreamWAV:
 	var notes: PackedFloat32Array

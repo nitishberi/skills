@@ -16,6 +16,8 @@ func _ready() -> void:
 	add_to_group("enemies")
 	add_to_group("duke_spikes")
 	hits_needed = 8 if is_final else 5
+	if RunState.hard_quest:
+		set_meta("speed_mul", SmbTuning.HARD_ENEMY_SPEED_MUL)
 	var s := Art.make_sprite("duke_final" if is_final else "duke_fake", true)
 	add_child(s)
 	if not is_final:
@@ -31,7 +33,8 @@ func _physics_process(delta: float) -> void:
 		return
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
-	velocity.x = dir * (PACE + (10.0 if is_final else 0.0))
+	var mul := float(get_meta("speed_mul", 1.0))
+	velocity.x = dir * (PACE + (10.0 if is_final else 0.0)) * mul
 	if has_meta("min_x") and global_position.x < float(get_meta("min_x")):
 		dir = 1.0
 	if has_meta("max_x") and global_position.x > float(get_meta("max_x")):

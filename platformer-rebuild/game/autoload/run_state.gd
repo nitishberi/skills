@@ -3,7 +3,7 @@ extends Node
 signal changed
 
 const START_LIVES := 3
-const START_TIME := 300
+const START_TIME := 400
 const STAGES_PER_WORLD := 4
 
 var lives: int = START_LIVES
@@ -23,6 +23,8 @@ var hard_quest: bool = false
 var world_cleared_once: bool = false
 var continue_world: int = 1
 var last_clear_time_bonus: int = 0
+var checkpoint_pos: Vector2 = Vector2.ZERO
+var has_checkpoint: bool = false
 
 func reset_run() -> void:
 	lives = START_LIVES
@@ -36,13 +38,27 @@ func reset_run() -> void:
 	max_camera_x = 0.0
 	pipe_return_scene = ""
 	use_pipe_spawn = false
+	clear_checkpoint()
 	# hard_quest persists until title resets it intentionally
 	changed.emit()
 
 func reset_stage_timer() -> void:
 	time_left = START_TIME
 	max_camera_x = 0.0
+	clear_checkpoint()
 	changed.emit()
+
+func reset_time_only() -> void:
+	time_left = START_TIME
+	changed.emit()
+
+func set_checkpoint(pos: Vector2) -> void:
+	checkpoint_pos = pos
+	has_checkpoint = true
+
+func clear_checkpoint() -> void:
+	has_checkpoint = false
+	checkpoint_pos = Vector2.ZERO
 
 func add_score(amount: int) -> void:
 	score += amount
@@ -75,7 +91,7 @@ func lose_life() -> void:
 func tick_time(delta: float) -> void:
 	if time_left <= 0.0:
 		return
-	time_left = maxf(0.0, time_left - delta)
+	time_left = maxf(0.0, time_left - delta * SmbTuning.TIMER_UNITS_PER_SECOND)
 	changed.emit()
 
 func world_stage_label() -> String:

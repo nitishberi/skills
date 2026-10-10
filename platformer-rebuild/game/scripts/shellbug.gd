@@ -7,6 +7,9 @@ const WALK_SPEED := 36.0
 const SLIDE_SPEED := 200.0
 const GRAVITY := 900.0
 
+func _speed_mul() -> float:
+	return float(get_meta("speed_mul", 1.0))
+
 var dir: float = -1.0
 var mode: Mode = Mode.WALK
 var dead: bool = false
@@ -18,6 +21,8 @@ var _wing_sprite: Sprite2D
 
 func _ready() -> void:
 	add_to_group("enemies")
+	if RunState.hard_quest:
+		set_meta("speed_mul", SmbTuning.HARD_ENEMY_SPEED_MUL)
 	_body_sprite = Art.make_sprite("shellbug", true)
 	_shell_sprite = Art.make_sprite("shellbug_shell", true)
 	_shell_sprite.visible = false
@@ -41,7 +46,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y += GRAVITY * delta
 	match mode:
 		Mode.WALK:
-			velocity.x = dir * WALK_SPEED
+			velocity.x = dir * WALK_SPEED * _speed_mul()
 			if is_on_wall():
 				dir *= -1.0
 			if winged:
@@ -52,7 +57,7 @@ func _physics_process(delta: float) -> void:
 		Mode.SHELL:
 			velocity.x = 0.0
 		Mode.SLIDE:
-			velocity.x = dir * SLIDE_SPEED
+			velocity.x = dir * SLIDE_SPEED * _speed_mul()
 			if is_on_wall():
 				dir *= -1.0
 	move_and_slide()

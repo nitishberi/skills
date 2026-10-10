@@ -11,6 +11,7 @@ const FxScript := preload("res://scripts/fx.gd")
 var player: CapPlayer
 var _cleared: bool = false
 var _active_world_item: Node = null
+var _next_checkpoint_x: float = 280.0
 
 func _ready() -> void:
 	_build_level()
@@ -19,12 +20,13 @@ func _ready() -> void:
 	if RunState.use_pipe_spawn and RunState.pipe_return_pos != Vector2.ZERO:
 		spawn = RunState.pipe_return_pos
 		RunState.use_pipe_spawn = false
+	elif RunState.has_checkpoint:
+		spawn = Vector2(RunState.checkpoint_pos.x, 320)
 	player = _spawn_player(spawn)
 	player.died.connect(_on_player_died)
 	var camera := $Camera2D
 	camera._target = player
-	if spawn.x > 48:
-		RunState.max_camera_x = spawn.x
+	RunState.max_camera_x = maxf(320.0, spawn.x)
 	_spawn_hud()
 	add_child(preload("res://scenes/pause_layer.tscn").instantiate())
 
@@ -32,6 +34,11 @@ func _process(delta: float) -> void:
 	if _cleared:
 		return
 	RunState.tick_time(delta)
+	Music.set_hurry(RunState.time_left > 0.0 and RunState.time_left <= SmbTuning.TIMER_HURRY_BELOW)
+	if player and is_instance_valid(player):
+		if player.global_position.x >= _next_checkpoint_x:
+			RunState.set_checkpoint(Vector2(player.global_position.x, 320))
+			_next_checkpoint_x += 384.0
 	if RunState.time_left <= 0.0:
 		_on_player_died()
 
@@ -296,10 +303,8 @@ func _build_level_2_4() -> void:
 	entities.add_child(axe)
 
 func _apply_hard_quest() -> void:
-	# Swap some Browncaps for extra Shellbugs by spawning more
 	_spawn_shellbug(Vector2(200, 300))
 	_spawn_shellbug(Vector2(360, 300))
-
 func _clear_world() -> void:
 	for c in world.get_children():
 		c.queue_free()

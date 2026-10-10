@@ -11,7 +11,7 @@ Reference product (evidence only): Super Mario Bros (NES, 1985). Clone-facing na
 | # | source | URL | notes |
 | --- | --- | --- | --- |
 | 1 | Wikipedia overview | https://en.wikipedia.org/wiki/Super_Mario_Bros. | worlds/levels, lives, power ladder, castle boss summary |
-| 2 | Super Mario Wiki (game page) | https://www.mariowiki.com/Super_Mario_Bros. | level structure, blocks, pipes, warp zones, castle endings |
+| 2 | Super Mario Wiki (game page) | https://www.mariowiki.com/Super_Mario_Bros. | timer (400/2.5×), controls, power-down, flagpole, hard mode, checkpoints (2026-10-10 refresh) |
 | 3 | Wikibooks gameplay | https://en.wikibooks.org/wiki/Super_Mario_Bros./Gameplay | grow/fire behavior, death conditions, level counts |
 | 4 | NES instruction manual (hosted transcript) | https://www.world-of-nintendo.com/manuals/nes/super_mario_bros.shtml | enemy defeat rules, death causes, scoring as published |
 | 5 | Mario Wiki / Fandom game page | https://mario.fandom.com/wiki/Super_Mario_Bros. | castle boss axe/fireball clear, power-up spawn rules |

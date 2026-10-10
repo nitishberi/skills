@@ -6,23 +6,13 @@ const FxScript := preload("res://scripts/fx.gd")
 signal died
 signal form_changed(form: String)
 
-const WALK_SPEED := 120.0
-const RUN_SPEED := 180.0
-const ACCEL := 900.0
-const FRICTION := 1100.0
-const JUMP_VELOCITY := -320.0
-const JUMP_CUT := 0.45
-const GRAVITY := 900.0
-const MAX_FALL := 420.0
-const COYOTE := 0.08
-const JUMP_BUFFER := 0.1
-
 var facing: float = 1.0
 var coyote_t: float = 0.0
 var jump_buf: float = 0.0
 var hurt_cooldown: float = 0.0
 var shoot_cooldown: float = 0.0
 var in_water: bool = false
+var input_locked: bool = false
 var _sprite: Sprite2D
 var _anim_t: float = 0.0
 var _walk_frame: int = 0
@@ -66,6 +56,10 @@ func _refresh_sprite(delta: float, force: bool = false) -> void:
 	_sprite.flip_h = facing < 0.0
 
 func _physics_process(delta: float) -> void:
+	if input_locked:
+		move_and_slide()
+		_refresh_sprite(delta)
+		return
 	if hurt_cooldown > 0.0:
 		hurt_cooldown -= delta
 	if shoot_cooldown > 0.0:
@@ -85,34 +79,41 @@ func _physics_process(delta: float) -> void:
 			velocity.y = minf(200.0, velocity.y + 40.0)
 	else:
 		if not is_on_floor():
-			velocity.y = minf(MAX_FALL, velocity.y + GRAVITY * delta)
+			velocity.y = minf(SmbTuning.MAX_FALL, velocity.y + SmbTuning.GRAVITY * delta)
 			coyote_t = maxf(0.0, coyote_t - delta)
 		else:
-			coyote_t = COYOTE
+			coyote_t = SmbTuning.COYOTE
 		if Input.is_action_just_pressed("jump"):
-			jump_buf = JUMP_BUFFER
+			jump_buf = SmbTuning.JUMP_BUFFER
 		else:
 			jump_buf = maxf(0.0, jump_buf - delta)
 		if jump_buf > 0.0 and coyote_t > 0.0:
-			velocity.y = JUMP_VELOCITY
+			var j := SmbTuning.JUMP_SMALL
+			if Input.is_action_pressed("run"):
+				var run_t := clampf(absf(velocity.x) / SmbTuning.RUN_MAX, 0.25, 1.0)
+				j += SmbTuning.JUMP_RUN_BONUS * run_t
+			velocity.y = j
 			jump_buf = 0.0
 			coyote_t = 0.0
 			Sfx.play("jump")
 		if Input.is_action_just_released("jump") and velocity.y < 0.0:
-			velocity.y *= JUMP_CUT
+			velocity.y *= SmbTuning.JUMP_CUT
 
 	var dir := Input.get_axis("move_left", "move_right")
-	var speed := (RUN_SPEED if Input.is_action_pressed("run") else WALK_SPEED)
+	var running := Input.is_action_pressed("run")
+	var cap := SmbTuning.RUN_MAX if running else SmbTuning.WALK_MAX
 	if in_water:
-		speed *= 0.75
+		cap *= 0.75
+	var accel := SmbTuning.GROUND_ACCEL if is_on_floor() else SmbTuning.AIR_ACCEL
+	var decel := SmbTuning.GROUND_DECEL if is_on_floor() else SmbTuning.AIR_DECEL
 	if dir != 0.0:
 		facing = signf(dir)
-		velocity.x = move_toward(velocity.x, dir * speed, ACCEL * delta)
+		velocity.x = move_toward(velocity.x, dir * cap, accel * delta)
 	else:
-		velocity.x = move_toward(velocity.x, 0.0, FRICTION * delta)
+		velocity.x = move_toward(velocity.x, 0.0, decel * delta)
 
 	if RunState.form == "fire" and Input.is_action_just_pressed("run") and shoot_cooldown <= 0.0:
-		_shoot_ember()
+		_try_shoot_ember()
 
 	if is_on_floor():
 		velocity += get_platform_velocity()
@@ -124,8 +125,11 @@ func _physics_process(delta: float) -> void:
 	if global_position.y > 420.0:
 		_die()
 
-func _shoot_ember() -> void:
-	shoot_cooldown = 0.35
+func _try_shoot_ember() -> void:
+	var count := get_tree().get_nodes_in_group("ember_shots").size()
+	if count >= SmbTuning.MAX_FIREBALLS:
+		return
+	shoot_cooldown = SmbTuning.FIRE_COOLDOWN
 	var shot := EmberShot.new()
 	shot.dir = facing if facing != 0.0 else 1.0
 	var shape := CollisionShape2D.new()
@@ -161,7 +165,7 @@ func _resolve_collisions() -> void:
 				collider.collect(self)
 		elif collider.is_in_group("goal"):
 			if collider.has_method("activate"):
-				collider.activate()
+				collider.activate(self)
 
 func _touch_enemy(enemy: Node, normal: Vector2) -> void:
 	if RunState.invuln_timer > 0.0:
@@ -173,10 +177,13 @@ func _touch_enemy(enemy: Node, normal: Vector2) -> void:
 	if enemy.is_in_group("duke_spikes"):
 		_take_hit()
 		return
+	if in_water:
+		_take_hit()
+		return
 	if normal.y < -0.5 and velocity.y >= 0.0:
 		if enemy.has_method("stomp"):
 			enemy.stomp()
-			velocity.y = JUMP_VELOCITY * 0.55
+			velocity.y = SmbTuning.JUMP_SMALL * SmbTuning.STOMP_BOUNCE
 			RunState.add_score(100)
 			Sfx.play("stomp")
 			_shake(3.0)
@@ -190,12 +197,12 @@ func _touch_enemy(enemy: Node, normal: Vector2) -> void:
 func _take_hit() -> void:
 	if hurt_cooldown > 0.0:
 		return
-	hurt_cooldown = 1.0
+	hurt_cooldown = 0.5
 	Sfx.play("hurt")
 	_shake(5.0)
 	if RunState.form == "fire" or RunState.form == "tall":
 		RunState.set_form("small")
-		RunState.invuln_timer = 1.5
+		RunState.invuln_timer = SmbTuning.HIT_IFRAMES
 		form_changed.emit(RunState.form)
 	else:
 		_die()
@@ -215,11 +222,21 @@ func grant_fire() -> void:
 	RunState.add_score(1000)
 	Sfx.play("power")
 
-func grant_invuln(seconds: float = 6.0) -> void:
+func grant_invuln(seconds: float = -1.0) -> void:
+	if seconds < 0.0:
+		seconds = SmbTuning.STAR_SECONDS
 	RunState.invuln_timer = seconds
 	modulate = Color(1.3, 1.25, 0.7)
 	RunState.add_score(1000)
 	Sfx.play("power")
+
+func slide_down_pole(target_y: float, duration: float) -> void:
+	input_locked = true
+	velocity = Vector2.ZERO
+	var tw := create_tween()
+	tw.tween_property(self, "global_position:y", target_y, duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	await tw.finished
+	input_locked = false
 
 func _shake(amount: float) -> void:
 	var cam := get_tree().get_first_node_in_group("game_camera")
