@@ -1,0 +1,18 @@
+# Global Cursor skill packs for this Cloud environment.
+# One entry per line. Formats:
+#   owner/repo
+#   owner/repo@ref
+#   https://github.com/owner/repo
+#
+# After editing, rebuild the Cloud Agent environment so `install` re-syncs
+# into ~/.cursor/skills on the snapshot.
+#
+# Add packs with:
+#   bash scripts/install-cursor-skills-from-github.sh add https://github.com/owner/repo
+#
+# Enabled packs (one per line):
+nitishberi/skills
+
+# More examples (uncomment to enable):
+# mattpocock/skills
+# vercel-labs/agent-skills
