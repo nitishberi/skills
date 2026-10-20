@@ -16,3 +16,4 @@ nitishberi/skills
 # More examples (uncomment to enable):
 # mattpocock/skills
 # vercel-labs/agent-skills
+morluto/rea
