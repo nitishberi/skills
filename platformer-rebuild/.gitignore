@@ -1,0 +1,13 @@
+# Godot export binaries (rebuild with export presets)
+/build/
+*.app/
+*.x86_64
+*.pck
+*.dmg
+*.exe
+*.zip
+
+# Godot editor local
+.godot/
+*.translation
+export_credentials.cfg

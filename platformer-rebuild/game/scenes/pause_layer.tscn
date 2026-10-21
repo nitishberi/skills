@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://pipehop_pause"]
+
+[ext_resource type="Script" path="res://scripts/pause_layer.gd" id="1"]
+
+[node name="PauseLayer" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1")
