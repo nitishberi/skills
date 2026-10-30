@@ -34,7 +34,16 @@ jobs:
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "8.0.x"
+          # Pin 8.x: SDK 10 lacks AppxPackage ExpandPriContent used by WindowsAppSDK PRI gen.
+          dotnet-version: "8.0.404"
+          global-json-file: apps/solidcraft-agent/global.json
+
+      - name: Verify .NET SDK
+        shell: pwsh
+        run: |
+          dotnet --info
+          $sdk = (dotnet --version)
+          if (-not $sdk.StartsWith("8.")) { throw "Expected .NET 8 SDK, got $sdk" }
 
       - name: Bump revision
         id: version
