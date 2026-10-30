@@ -6,7 +6,7 @@ public sealed record McpToolDescriptor(string Name, string? Description, JsonNod
 
 public sealed record McpToolCallResult(bool IsError, string Content, JsonNode? StructuredContent = null);
 
-public sealed class McpKernelException : Exception
+public class McpKernelException : Exception
 {
     public McpKernelException(string message, string? toolName = null, string? raw = null)
         : base(message)
@@ -20,7 +20,7 @@ public sealed class McpKernelException : Exception
     public string? Raw { get; }
 }
 
-public sealed class McpBatchException : McpKernelException
+public class McpBatchException : McpKernelException
 {
     public McpBatchException(string message, string? raw = null)
         : base(message, SolidCraftToolNames.Batch, raw)
