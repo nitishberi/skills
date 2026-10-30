@@ -58,7 +58,8 @@ jobs:
         run: |
           $ver = "${{ steps.version.outputs.version }}"
           $rev = "${{ steps.version.outputs.revision }}"
-          New-Item -ItemType Directory -Force -Path dist/publish | Out-Null
+          New-Item -ItemType Directory -Force -Path dist/publish, dist/logs | Out-Null
+          $log = "dist/logs/publish.log"
           dotnet publish src/SolidCraftAgent.App/SolidCraftAgent.App.csproj `
             -c Release `
             -r win-x64 `
@@ -70,15 +71,28 @@ jobs:
             -p:Version=$ver `
             -p:AssemblyVersion="$ver.0" `
             -p:FileVersion="$ver.0" `
-            -p:InformationalVersion="$ver+r$rev"
+            -p:InformationalVersion="$ver+r$rev" `
+            *>&1 | Tee-Object -FilePath $log
+          if ($LASTEXITCODE -ne 0) {
+            Get-Content $log | Select-String -Pattern "error|Error|error CS|MSB" | ForEach-Object { "::error::$($_.Line)" }
+            throw "dotnet publish failed ($LASTEXITCODE). See dist/logs/publish.log"
+          }
           if (-not (Test-Path "dist/publish/SolidCraftAgent.exe")) {
             if (Test-Path "dist/publish/SolidCraftAgent.App.exe") {
               Copy-Item "dist/publish/SolidCraftAgent.App.exe" "dist/publish/SolidCraftAgent.exe"
             } else {
-              Get-ChildItem dist/publish -Filter *.exe | Select-Object -First 20 | ForEach-Object { $_.FullName }
+              Get-ChildItem dist/publish -Filter *.exe -ErrorAction SilentlyContinue | Select-Object -First 20 | ForEach-Object { $_.FullName }
               throw "Published exe not found"
             }
           }
+
+      - name: Upload publish log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish-log
+          path: apps/solidcraft-agent/dist/logs/publish.log
+          if-no-files-found: ignore
 
       - name: Zip portable build
         shell: pwsh
