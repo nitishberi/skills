@@ -44,14 +44,18 @@ Open **Settings** in the app:
 
 | Field | What to set |
 |---|---|
-| LLM provider | Claude, OpenAI, or OpenAI-compatible local |
-| Model id | e.g. `claude-sonnet-4-5`, `gpt-4.1`, or your Ollama model name |
-| API key | Stored in **Windows Credential Manager** (never hardcoded) |
-| Local base URL | For Ollama typically `http://127.0.0.1:11434/v1`; for LM Studio the local OpenAI-compatible URL it shows |
+| Protocol | **Anthropic-compatible API** or **OpenAI-compatible API** (same split as SolidCraft's built-in **Add agent** dialog) |
+| Name | Display name (SolidCraft uses e.g. `Anthropic`) |
+| Base URL | Anthropic preset: `https://api.anthropic.com/v1` (app posts to `{base}/messages`). Local Anthropic-compatible proxies use their host `/v1`. OpenAI-compatible local: typically `http://127.0.0.1:11434/v1` |
+| Model id | Any id the endpoint accepts (cloud Claude models, or a local id such as `qwen3:14b`) |
+| Request timeout | SolidCraft default is **300 s** |
+| API key | Optional; stored in **Windows Credential Manager** / system keychain, never in settings.json. Leave empty for a local server |
 | SolidCraft MCP command | Full path or command that launches the SolidCraft MCP server on stdio |
 | MCP arguments / working directory | Whatever your SolidCraft MCP install expects |
 | Default units | `mm` (agent also forces units after `new_design`) |
 | Permanent save folder | A folder SolidCraft is allowed to write to across MCP restarts (avoid relying only on `%TEMP%\solidcraft-mcp-*`) |
+
+SolidCraft's own **Add agent** UI (Kind: API endpoint, Protocol: Anthropic-compatible API, Preset: Anthropic) is the reference for these fields. Our Settings page mirrors that shape so the same base URL / model / timeout / keychain values transfer cleanly.
 
 ### Discovering the SolidCraft MCP command on your PC
 

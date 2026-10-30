@@ -35,7 +35,7 @@ dotnet build src/SolidCraftAgent.App/SolidCraftAgent.App.csproj -p:Platform=x64
 ## Plan todos covered
 
 1. **scaffold-winui** - Session / Lessons / Settings navigation and pages
-2. **llm-switch** - Claude, OpenAI, OpenAI-compatible; keys via secret store
+2. **llm-switch** - Anthropic-compatible / OpenAI-compatible (SolidCraft Add agent shape: base URL `/v1`, optional keychain key, 300s timeout); keys via secret store
 3. **mcp-client** - stdio MCP client, batch all-or-nothing, kernel errors to chat
 4. **agent-loop** - orchestrator + seed prompt / checks from modelling history
 5. **lessons-ui** - `lessons.md` + SQLite, approve / reject / fold, active prompt injection
