@@ -1,0 +1,7 @@
+[
+  { "callout": ".190-24", "modelDiameterIn": 0.1495, "notes": "UNC tap drill" },
+  { "callout": ".250-20", "modelDiameterIn": 0.201, "notes": "UNC tap drill" },
+  { "callout": ".375-16", "modelDiameterIn": 0.3125, "notes": "UNC tap drill" },
+  { "callout": ".250-18 NPT", "modelDiameterIn": 0.4375, "notes": "NPT tap drill / counterbore stand-in" },
+  { "callout": ".375-18 NPT", "modelDiameterIn": 0.578, "notes": "NPT tap drill / counterbore stand-in" }
+]

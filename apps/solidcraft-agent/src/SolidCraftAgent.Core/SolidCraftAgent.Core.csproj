@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>SolidCraftAgent.Core</RootNamespace>
+    <AssemblyName>SolidCraftAgent.Core</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.11" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SolidCraftAgent.Llm\SolidCraftAgent.Llm.csproj" />
+    <ProjectReference Include="..\SolidCraftAgent.Mcp\SolidCraftAgent.Mcp.csproj" />
+    <ProjectReference Include="..\SolidCraftAgent.Secrets\SolidCraftAgent.Secrets.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\data\lessons-seed.md" LogicalName="SolidCraftAgent.Core.Seed.lessons-seed.md" />
+    <EmbeddedResource Include="..\..\data\system-prompt.md" LogicalName="SolidCraftAgent.Core.Seed.system-prompt.md" />
+    <EmbeddedResource Include="..\..\data\tap-drill-table.json" LogicalName="SolidCraftAgent.Core.Seed.tap-drill-table.json" />
+    <EmbeddedResource Include="..\..\data\verification-checks.json" LogicalName="SolidCraftAgent.Core.Seed.verification-checks.json" />
+    <EmbeddedResource Include="..\..\data\kernel-workarounds.json" LogicalName="SolidCraftAgent.Core.Seed.kernel-workarounds.json" />
+  </ItemGroup>
+</Project>

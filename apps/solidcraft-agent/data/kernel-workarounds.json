@@ -1,0 +1,22 @@
+[
+  {
+    "problem": "Fillet blend larger than neighbouring faces or end face parallel",
+    "workaround": "Larger fillets first; reduce the one that cannot fit; or model as a sketched profile body, intersect, combine."
+  },
+  {
+    "problem": "Join failed on coincident side faces",
+    "workaround": "Oversized blank plus pocket cuts."
+  },
+  {
+    "problem": "Trim cut skipped silently on coincident arc faces",
+    "workaround": "Oversized intersect profile and a separate body."
+  },
+  {
+    "problem": "Intersect changed only the first target",
+    "workaround": "Run intersect again for each target."
+  },
+  {
+    "problem": "solid.thread rejected inch UNC strings such as 3/8-16 UNC",
+    "workaround": "ISO metric only; leave inch threads unmodelled and use tap-drill diameters."
+  }
+]

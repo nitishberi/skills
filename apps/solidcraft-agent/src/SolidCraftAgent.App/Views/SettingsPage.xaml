@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="SolidCraftAgent.App.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ScrollViewer Padding="16">
+    <StackPanel Spacing="12" MaxWidth="720">
+      <TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}" />
+
+      <TextBlock Text="LLM provider" Style="{StaticResource SubtitleTextBlockStyle}" />
+      <ComboBox x:Name="ProviderBox" Width="280" SelectionChanged="ProviderBox_SelectionChanged">
+        <ComboBoxItem Content="Claude" Tag="Claude" />
+        <ComboBoxItem Content="OpenAI" Tag="OpenAi" />
+        <ComboBoxItem Content="OpenAI-compatible (Ollama / LM Studio)" Tag="OpenAiCompatible" />
+      </ComboBox>
+
+      <TextBox x:Name="ClaudeModelBox" Header="Claude model" />
+      <PasswordBox x:Name="ClaudeKeyBox" Header="Claude API key (Windows Credential Manager)" />
+
+      <TextBox x:Name="OpenAiModelBox" Header="OpenAI model" />
+      <PasswordBox x:Name="OpenAiKeyBox" Header="OpenAI API key" />
+      <TextBox x:Name="OpenAiBaseBox" Header="OpenAI base URL" />
+
+      <TextBox x:Name="LocalModelBox" Header="Local / compatible model id" />
+      <TextBox x:Name="LocalBaseBox" Header="Local base URL (e.g. http://127.0.0.1:11434/v1)" />
+      <PasswordBox x:Name="LocalKeyBox" Header="Local API key (optional)" />
+
+      <TextBlock Text="SolidCraft MCP" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,12,0,0" />
+      <TextBox x:Name="McpCommandBox" Header="MCP command / path" />
+      <TextBox x:Name="McpArgsBox" Header="MCP arguments" />
+      <TextBox x:Name="McpCwdBox" Header="MCP working directory (optional)" />
+
+      <TextBlock Text="Models" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,12,0,0" />
+      <TextBox x:Name="UnitsBox" Header="Default units" />
+      <TextBox x:Name="ModelsFolderBox" Header="Permanent save folder" />
+
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Save settings" Click="Save_Click" />
+        <TextBlock x:Name="SaveStatus" VerticalAlignment="Center" Opacity="0.7" />
+      </StackPanel>
+
+      <TextBlock TextWrapping="Wrap" Opacity="0.7"
+                 Text="API keys are stored via Windows Credential Manager on Windows. Non-Windows unit tests use an in-memory or file secret store." />
+    </StackPanel>
+  </ScrollViewer>
+</Page>
