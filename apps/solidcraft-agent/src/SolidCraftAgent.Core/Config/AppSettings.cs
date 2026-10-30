@@ -6,10 +6,14 @@ public sealed class AppSettings
 {
     public LlmSettings Llm { get; set; } = new();
 
-    /// <summary>Executable or command that launches the SolidCraft MCP server (stdio).</summary>
-    public string SolidCraftMcpCommand { get; set; } = "solidcraft-mcp";
+    /// <summary>
+    /// Executable that launches the SolidCraft MCP server (stdio).
+    /// Default matches Cursor mcp.json: SolidCraft → solidcraft-cli.exe mcp.
+    /// </summary>
+    public string SolidCraftMcpCommand { get; set; } =
+        @"C:\Program Files\SolidCraft\solidcraft-cli.exe";
 
-    public string SolidCraftMcpArguments { get; set; } = string.Empty;
+    public string SolidCraftMcpArguments { get; set; } = "mcp";
 
     public string? SolidCraftMcpWorkingDirectory { get; set; }
 

@@ -33,9 +33,11 @@
                  Text="API keys are stored in the system keychain (Windows Credential Manager), never in settings.json. Leave the Anthropic key empty for a local Anthropic-compatible server." />
 
       <TextBlock Text="SolidCraft MCP" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,12,0,0" />
-      <TextBox x:Name="McpCommandBox" Header="MCP command / path" />
-      <TextBox x:Name="McpArgsBox" Header="MCP arguments" />
+      <TextBox x:Name="McpCommandBox" Header="MCP command (Cursor default: C:\Program Files\SolidCraft\solidcraft-cli.exe)" />
+      <TextBox x:Name="McpArgsBox" Header="MCP arguments (Cursor default: mcp)" />
       <TextBox x:Name="McpCwdBox" Header="MCP working directory (optional)" />
+      <TextBlock TextWrapping="Wrap" Opacity="0.7"
+                 Text="Matches Cursor mcp.json server SolidCraft: solidcraft-cli.exe with args [mcp]." />
 
       <TextBlock Text="Models" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,12,0,0" />
       <TextBox x:Name="UnitsBox" Header="Default units" />

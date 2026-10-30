@@ -57,13 +57,22 @@ Open **Settings** in the app:
 
 SolidCraft's own **Add agent** UI (Kind: API endpoint, Protocol: Anthropic-compatible API, Preset: Anthropic) is the reference for these fields. Our Settings page mirrors that shape so the same base URL / model / timeout / keychain values transfer cleanly.
 
-### Discovering the SolidCraft MCP command on your PC
+### SolidCraft MCP command (from Cursor)
 
-SolidCraft MCP discovery is environment-specific. Common places to look:
+This machine's Cursor MCP config (`%USERPROFILE%\.cursor\mcp.json`) uses:
 
-1. The MCP config already used by Claude Code / Cursor on this machine (the `solidcraft` server entry: command, args, cwd).
-2. SolidCraft install directory under Program Files or the user's AppData.
-3. A helper executable named like `solidcraft-mcp` on PATH.
+```json
+{
+  "mcpServers": {
+    "SolidCraft": {
+      "command": "C:\\Program Files\\SolidCraft\\solidcraft-cli.exe",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+The app defaults match that: command `C:\Program Files\SolidCraft\solidcraft-cli.exe`, arguments `mcp`. Change Settings only if your install path differs.
 
 If the app cannot start the MCP process, Settings will still save the path; the Session step log will show the launch / initialize error. The agent cannot talk to SolidCraft until that command succeeds.
 
