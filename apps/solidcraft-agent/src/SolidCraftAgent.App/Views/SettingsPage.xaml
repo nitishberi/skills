@@ -7,23 +7,30 @@
     <StackPanel Spacing="12" MaxWidth="720">
       <TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}" />
 
-      <TextBlock Text="LLM provider" Style="{StaticResource SubtitleTextBlockStyle}" />
-      <ComboBox x:Name="ProviderBox" Width="280" SelectionChanged="ProviderBox_SelectionChanged">
-        <ComboBoxItem Content="Claude" Tag="Claude" />
-        <ComboBoxItem Content="OpenAI" Tag="OpenAi" />
-        <ComboBoxItem Content="OpenAI-compatible (Ollama / LM Studio)" Tag="OpenAiCompatible" />
+      <TextBlock Text="LLM (matches SolidCraft Add agent)" Style="{StaticResource SubtitleTextBlockStyle}" />
+      <TextBox x:Name="AgentNameBox" Header="Name" />
+      <ComboBox x:Name="ProviderBox" Width="360" Header="Protocol" SelectionChanged="ProviderBox_SelectionChanged">
+        <ComboBoxItem Content="Anthropic-compatible API" Tag="Claude" />
+        <ComboBoxItem Content="OpenAI-compatible API (OpenAI cloud)" Tag="OpenAi" />
+        <ComboBoxItem Content="OpenAI-compatible API (local: Ollama / LM Studio)" Tag="OpenAiCompatible" />
       </ComboBox>
 
-      <TextBox x:Name="ClaudeModelBox" Header="Claude model" />
-      <PasswordBox x:Name="ClaudeKeyBox" Header="Claude API key (Windows Credential Manager)" />
+      <TextBox x:Name="ClaudeBaseBox" Header="Anthropic base URL (e.g. https://api.anthropic.com/v1)" />
+      <TextBox x:Name="ClaudeModelBox" Header="Anthropic model id" />
+      <PasswordBox x:Name="ClaudeKeyBox" Header="Anthropic API key (optional; Windows Credential Manager)" />
 
-      <TextBox x:Name="OpenAiModelBox" Header="OpenAI model" />
-      <PasswordBox x:Name="OpenAiKeyBox" Header="OpenAI API key" />
       <TextBox x:Name="OpenAiBaseBox" Header="OpenAI base URL" />
+      <TextBox x:Name="OpenAiModelBox" Header="OpenAI model id" />
+      <PasswordBox x:Name="OpenAiKeyBox" Header="OpenAI API key" />
 
-      <TextBox x:Name="LocalModelBox" Header="Local / compatible model id" />
-      <TextBox x:Name="LocalBaseBox" Header="Local base URL (e.g. http://127.0.0.1:11434/v1)" />
+      <TextBox x:Name="LocalBaseBox" Header="Local OpenAI-compatible base URL" />
+      <TextBox x:Name="LocalModelBox" Header="Local model id" />
       <PasswordBox x:Name="LocalKeyBox" Header="Local API key (optional)" />
+
+      <NumberBox x:Name="TimeoutBox" Header="Request timeout (seconds)" Minimum="1" Maximum="3600" SpinButtonPlacementMode="Inline" />
+
+      <TextBlock TextWrapping="Wrap" Opacity="0.7"
+                 Text="API keys are stored in the system keychain (Windows Credential Manager), never in settings.json. Leave the Anthropic key empty for a local Anthropic-compatible server." />
 
       <TextBlock Text="SolidCraft MCP" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,12,0,0" />
       <TextBox x:Name="McpCommandBox" Header="MCP command / path" />
@@ -38,9 +45,6 @@
         <Button Content="Save settings" Click="Save_Click" />
         <TextBlock x:Name="SaveStatus" VerticalAlignment="Center" Opacity="0.7" />
       </StackPanel>
-
-      <TextBlock TextWrapping="Wrap" Opacity="0.7"
-                 Text="API keys are stored via Windows Credential Manager on Windows. Non-Windows unit tests use an in-memory or file secret store." />
     </StackPanel>
   </ScrollViewer>
 </Page>

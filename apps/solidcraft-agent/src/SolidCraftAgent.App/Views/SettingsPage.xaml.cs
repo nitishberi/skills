@@ -18,11 +18,14 @@ public sealed partial class SettingsPage : Page
     {
         var s = AppServices.Settings;
         SelectProvider(s.Llm.Provider);
+        AgentNameBox.Text = s.Llm.AgentName;
+        ClaudeBaseBox.Text = s.Llm.ClaudeBaseUrl;
         ClaudeModelBox.Text = s.Llm.ClaudeModel;
         OpenAiModelBox.Text = s.Llm.OpenAiModel;
         OpenAiBaseBox.Text = s.Llm.OpenAiBaseUrl;
         LocalModelBox.Text = s.Llm.OpenAiCompatibleModel;
         LocalBaseBox.Text = s.Llm.OpenAiCompatibleBaseUrl;
+        TimeoutBox.Value = s.Llm.RequestTimeoutSeconds;
         McpCommandBox.Text = s.SolidCraftMcpCommand;
         McpArgsBox.Text = s.SolidCraftMcpArguments;
         McpCwdBox.Text = s.SolidCraftMcpWorkingDirectory ?? string.Empty;
@@ -43,11 +46,14 @@ public sealed partial class SettingsPage : Page
     {
         var s = AppServices.Settings;
         s.Llm.Provider = ReadProvider();
+        s.Llm.AgentName = AgentNameBox.Text.Trim();
+        s.Llm.ClaudeBaseUrl = ClaudeBaseBox.Text.Trim();
         s.Llm.ClaudeModel = ClaudeModelBox.Text.Trim();
         s.Llm.OpenAiModel = OpenAiModelBox.Text.Trim();
         s.Llm.OpenAiBaseUrl = OpenAiBaseBox.Text.Trim();
         s.Llm.OpenAiCompatibleModel = LocalModelBox.Text.Trim();
         s.Llm.OpenAiCompatibleBaseUrl = LocalBaseBox.Text.Trim();
+        s.Llm.RequestTimeoutSeconds = double.IsNaN(TimeoutBox.Value) ? 300 : (int)TimeoutBox.Value;
         s.SolidCraftMcpCommand = McpCommandBox.Text.Trim();
         s.SolidCraftMcpArguments = McpArgsBox.Text.Trim();
         s.SolidCraftMcpWorkingDirectory = string.IsNullOrWhiteSpace(McpCwdBox.Text) ? null : McpCwdBox.Text.Trim();

@@ -7,6 +7,11 @@ using SolidCraftAgent.Secrets;
 
 namespace SolidCraftAgent.Llm.Providers;
 
+/// <summary>
+/// Anthropic Messages API (also used for Anthropic-compatible local / proxy endpoints).
+/// Matches SolidCraft's "Anthropic-compatible API" agent kind: base URL like
+/// https://api.anthropic.com/v1, optional keychain API key, arbitrary model id.
+/// </summary>
 public sealed class ClaudeChatProvider : IChatProvider
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -18,25 +23,38 @@ public sealed class ClaudeChatProvider : IChatProvider
     private readonly HttpClient _http;
     private readonly ISecretStore _secrets;
     private readonly string _baseUrl;
+    private readonly bool _requireApiKey;
+    private readonly TimeSpan _timeout;
 
-    public ClaudeChatProvider(HttpClient http, ISecretStore secrets, string modelId, string baseUrl)
+    public ClaudeChatProvider(
+        HttpClient http,
+        ISecretStore secrets,
+        string modelId,
+        string baseUrl,
+        bool requireApiKey = false,
+        int requestTimeoutSeconds = 300)
     {
         _http = http;
         _secrets = secrets;
         ModelId = modelId;
-        _baseUrl = baseUrl.TrimEnd('/');
+        _baseUrl = NormalizeBaseUrl(baseUrl);
+        _requireApiKey = requireApiKey;
+        _timeout = TimeSpan.FromSeconds(requestTimeoutSeconds <= 0 ? 300 : requestTimeoutSeconds);
     }
 
     public LlmProviderKind Kind => LlmProviderKind.Claude;
 
     public string ModelId { get; }
 
+    public string MessagesUrl => $"{_baseUrl}/messages";
+
     public async Task<ChatResponse> CompleteAsync(ChatRequest request, CancellationToken cancellationToken = default)
     {
         var apiKey = await _secrets.GetAsync(SecretKeys.ClaudeApiKey, cancellationToken).ConfigureAwait(false);
-        if (string.IsNullOrWhiteSpace(apiKey))
+        if (_requireApiKey && string.IsNullOrWhiteSpace(apiKey))
         {
-            throw new InvalidOperationException($"Claude API key is not configured (secret '{SecretKeys.ClaudeApiKey}').");
+            throw new InvalidOperationException(
+                $"Anthropic API key is not configured (secret '{SecretKeys.ClaudeApiKey}'). Leave empty only for a local Anthropic-compatible server.");
         }
 
         var messages = new JsonArray();
@@ -136,20 +154,43 @@ public sealed class ClaudeChatProvider : IChatProvider
             body["tools"] = tools;
         }
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/v1/messages");
-        httpRequest.Headers.Add("x-api-key", apiKey);
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeoutCts.CancelAfter(_timeout);
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, MessagesUrl);
+        if (!string.IsNullOrWhiteSpace(apiKey))
+        {
+            httpRequest.Headers.Add("x-api-key", apiKey);
+        }
+
         httpRequest.Headers.Add("anthropic-version", "2023-06-01");
         httpRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         httpRequest.Content = new StringContent(body.ToJsonString(JsonOptions), Encoding.UTF8, "application/json");
 
-        using var response = await _http.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
-        var raw = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        using var response = await _http.SendAsync(httpRequest, timeoutCts.Token).ConfigureAwait(false);
+        var raw = await response.Content.ReadAsStringAsync(timeoutCts.Token).ConfigureAwait(false);
         if (!response.IsSuccessStatusCode)
         {
-            throw new InvalidOperationException($"Claude chat failed ({(int)response.StatusCode}): {raw}");
+            throw new InvalidOperationException($"Anthropic-compatible chat failed ({(int)response.StatusCode}): {raw}");
         }
 
         return ParseResponse(raw);
+    }
+
+    /// <summary>
+    /// SolidCraft stores base URL as https://api.anthropic.com/v1.
+    /// Older configs may omit /v1; normalize so we always POST to {base}/messages.
+    /// </summary>
+    internal static string NormalizeBaseUrl(string baseUrl)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(baseUrl);
+        var trimmed = baseUrl.Trim().TrimEnd('/');
+        if (trimmed.EndsWith("/v1", StringComparison.OrdinalIgnoreCase))
+        {
+            return trimmed;
+        }
+
+        return trimmed + "/v1";
     }
 
     internal static ChatResponse ParseResponse(string raw)

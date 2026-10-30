@@ -18,13 +18,17 @@ public sealed class ChatProviderFactory : IChatProviderFactory
     public IChatProvider Create(LlmSettings settings)
     {
         ArgumentNullException.ThrowIfNull(settings);
+        // Mirror SolidCraft "Add agent": Anthropic-compatible and OpenAI-compatible API
+        // endpoints; API key optional for local servers (kept in keychain when set).
         return settings.Provider switch
         {
             LlmProviderKind.Claude => new ClaudeChatProvider(
                 _http,
                 _secrets,
                 settings.ClaudeModel,
-                settings.ClaudeBaseUrl),
+                settings.ClaudeBaseUrl,
+                requireApiKey: false,
+                requestTimeoutSeconds: settings.RequestTimeoutSeconds),
             LlmProviderKind.OpenAi => new OpenAiCompatibleChatProvider(
                 _http,
                 _secrets,
@@ -32,7 +36,8 @@ public sealed class ChatProviderFactory : IChatProviderFactory
                 settings.OpenAiModel,
                 settings.OpenAiBaseUrl,
                 SecretKeys.OpenAiApiKey,
-                requireApiKey: true),
+                requireApiKey: true,
+                requestTimeoutSeconds: settings.RequestTimeoutSeconds),
             LlmProviderKind.OpenAiCompatible => new OpenAiCompatibleChatProvider(
                 _http,
                 _secrets,
@@ -40,7 +45,8 @@ public sealed class ChatProviderFactory : IChatProviderFactory
                 settings.OpenAiCompatibleModel,
                 settings.OpenAiCompatibleBaseUrl,
                 SecretKeys.OpenAiCompatibleApiKey,
-                requireApiKey: false),
+                requireApiKey: false,
+                requestTimeoutSeconds: settings.RequestTimeoutSeconds),
             _ => throw new ArgumentOutOfRangeException(nameof(settings), settings.Provider, "Unknown LLM provider."),
         };
     }

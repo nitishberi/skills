@@ -23,6 +23,7 @@ public sealed class OpenAiCompatibleChatProvider : IChatProvider
     private readonly ISecretStore _secrets;
     private readonly string _apiKeySecretKey;
     private readonly bool _requireApiKey;
+    private readonly TimeSpan _timeout;
 
     public OpenAiCompatibleChatProvider(
         HttpClient http,
@@ -31,7 +32,8 @@ public sealed class OpenAiCompatibleChatProvider : IChatProvider
         string modelId,
         string baseUrl,
         string apiKeySecretKey,
-        bool requireApiKey = true)
+        bool requireApiKey = true,
+        int requestTimeoutSeconds = 300)
     {
         _http = http;
         _secrets = secrets;
@@ -40,6 +42,7 @@ public sealed class OpenAiCompatibleChatProvider : IChatProvider
         BaseUrl = baseUrl.TrimEnd('/');
         _apiKeySecretKey = apiKeySecretKey;
         _requireApiKey = requireApiKey;
+        _timeout = TimeSpan.FromSeconds(requestTimeoutSeconds <= 0 ? 300 : requestTimeoutSeconds);
     }
 
     public LlmProviderKind Kind { get; }
@@ -133,6 +136,9 @@ public sealed class OpenAiCompatibleChatProvider : IChatProvider
             body["tool_choice"] = "auto";
         }
 
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeoutCts.CancelAfter(_timeout);
+
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/chat/completions");
         if (!string.IsNullOrWhiteSpace(apiKey))
         {
@@ -141,8 +147,8 @@ public sealed class OpenAiCompatibleChatProvider : IChatProvider
 
         httpRequest.Content = new StringContent(body.ToJsonString(JsonOptions), Encoding.UTF8, "application/json");
 
-        using var response = await _http.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
-        var raw = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        using var response = await _http.SendAsync(httpRequest, timeoutCts.Token).ConfigureAwait(false);
+        var raw = await response.Content.ReadAsStringAsync(timeoutCts.Token).ConfigureAwait(false);
         if (!response.IsSuccessStatusCode)
         {
             throw new InvalidOperationException($"OpenAI-compatible chat failed ({(int)response.StatusCode}): {raw}");
