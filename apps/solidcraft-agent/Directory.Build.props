@@ -5,5 +5,24 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <!-- Stamp Assembly/File version from version.json (major.minor.revision). -->
+  <PropertyGroup>
+    <_VersionFile>$(MSBuildThisFileDirectory)version.json</_VersionFile>
+  </PropertyGroup>
+  <Target Name="ReadSolidCraftAgentVersion" BeforeTargets="GetAssemblyVersion;GenerateNuspec;CoreCompile" Condition="Exists('$(_VersionFile)')">
+    <PropertyGroup>
+      <_VersionJson>$([System.IO.File]::ReadAllText('$(_VersionFile)'))</_VersionJson>
+      <_VersionMajor>$([System.Text.RegularExpressions.Regex]::Match($(_VersionJson), '"major"\s*:\s*(\d+)').Groups[1].Value)</_VersionMajor>
+      <_VersionMinor>$([System.Text.RegularExpressions.Regex]::Match($(_VersionJson), '"minor"\s*:\s*(\d+)').Groups[1].Value)</_VersionMinor>
+      <_VersionRevision>$([System.Text.RegularExpressions.Regex]::Match($(_VersionJson), '"revision"\s*:\s*(\d+)').Groups[1].Value)</_VersionRevision>
+      <Version>$(_VersionMajor).$(_VersionMinor).$(_VersionRevision)</Version>
+      <AssemblyVersion>$(_VersionMajor).$(_VersionMinor).$(_VersionRevision).0</AssemblyVersion>
+      <FileVersion>$(_VersionMajor).$(_VersionMinor).$(_VersionRevision).0</FileVersion>
+      <InformationalVersion>$(_VersionMajor).$(_VersionMinor).$(_VersionRevision)+r$(_VersionRevision)</InformationalVersion>
+      <Product>SolidCraft Agent</Product>
+      <Company>SolidCraft Agent</Company>
+      <Copyright>Copyright (c) SolidCraft Agent contributors</Copyright>
+    </PropertyGroup>
+    <Message Importance="high" Text="SolidCraft Agent version $(Version) (r$(_VersionRevision))" />
+  </Target>
 </Project>
-

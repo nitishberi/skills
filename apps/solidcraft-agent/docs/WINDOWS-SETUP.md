@@ -23,6 +23,22 @@ dotnet run --project src\SolidCraftAgent.App\SolidCraftAgent.App.csproj -c Debug
 
 The app is configured as **unpackaged** (`WindowsPackageType=None`) so you can F5 without MSIX signing for local development.
 
+## Installable Setup.exe (incremental revision)
+
+Each publish bumps `version.json` revision and stamps that into the assembly + installer filename:
+
+- `SolidCraftAgent-Setup-rN.exe` (Inno Setup installer)
+- `SolidCraftAgent-rN-win-x64.zip` (portable folder zip)
+
+Local (Windows, with .NET 8 SDK + [Inno Setup 6](https://jrsoftware.org/isinfo.php)):
+
+```powershell
+cd apps\solidcraft-agent
+powershell -ExecutionPolicy Bypass -File .\scripts\publish-windows.ps1
+```
+
+CI: workflow `SolidCraft Agent Windows build` (`.github/workflows/solidcraft-agent-windows.yml`) runs on this branch and uploads the Setup exe as an Actions artifact.
+
 ## Unit tests (Windows or Linux)
 
 ```powershell

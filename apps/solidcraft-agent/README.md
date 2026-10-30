@@ -29,6 +29,9 @@ dotnet test SolidCraftAgent.Libraries.slnf
 
 # Full Windows app
 dotnet build src/SolidCraftAgent.App/SolidCraftAgent.App.csproj -p:Platform=x64
+
+# Installable exe (bumps version.json revision → SolidCraftAgent-Setup-rN.exe)
+powershell -ExecutionPolicy Bypass -File .\scripts\publish-windows.ps1
 ```
 
 
