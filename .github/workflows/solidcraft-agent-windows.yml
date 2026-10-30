@@ -45,6 +45,9 @@ jobs:
           $sdk = (dotnet --version)
           if (-not $sdk.StartsWith("8.")) { throw "Expected .NET 8 SDK, got $sdk" }
 
+      - name: Setup MSBuild (VS AppxPackage / PRI tasks)
+        uses: microsoft/setup-msbuild@v2
+
       - name: Bump revision
         id: version
         shell: pwsh
@@ -69,22 +72,26 @@ jobs:
           $rev = "${{ steps.version.outputs.revision }}"
           New-Item -ItemType Directory -Force -Path dist/publish, dist/logs | Out-Null
           $log = "dist/logs/publish.log"
-          dotnet publish src/SolidCraftAgent.App/SolidCraftAgent.App.csproj `
-            -c Release `
-            -r win-x64 `
-            --self-contained true `
-            -p:Platform=x64 `
-            -p:PublishDir="$PWD/dist/publish" `
-            -p:WindowsPackageType=None `
-            -p:WindowsAppSDKSelfContained=true `
-            -p:Version=$ver `
-            -p:AssemblyVersion="$ver.0" `
-            -p:FileVersion="$ver.0" `
-            -p:InformationalVersion="$ver+r$rev" `
+          # Use VS MSBuild so ExpandPriContent / AppxPackage tasks resolve (missing from bare dotnet SDK).
+          msbuild src/SolidCraftAgent.App/SolidCraftAgent.App.csproj `
+            /restore `
+            /t:Publish `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:RuntimeIdentifier=win-x64 `
+            /p:SelfContained=true `
+            /p:PublishDir="$PWD\dist\publish\\" `
+            /p:WindowsPackageType=None `
+            /p:WindowsAppSDKSelfContained=true `
+            /p:Version=$ver `
+            /p:AssemblyVersion="$ver.0" `
+            /p:FileVersion="$ver.0" `
+            /p:InformationalVersion="$ver+r$rev" `
+            /v:m `
             *>&1 | Tee-Object -FilePath $log
           if ($LASTEXITCODE -ne 0) {
             Get-Content $log | Select-String -Pattern "error|Error|error CS|MSB" | ForEach-Object { "::error::$($_.Line)" }
-            throw "dotnet publish failed ($LASTEXITCODE). See dist/logs/publish.log"
+            throw "msbuild publish failed ($LASTEXITCODE). See dist/logs/publish.log"
           }
           if (-not (Test-Path "dist/publish/SolidCraftAgent.exe")) {
             if (Test-Path "dist/publish/SolidCraftAgent.App.exe") {
