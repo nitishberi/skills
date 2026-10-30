@@ -1,0 +1,158 @@
+name: SolidCraft Agent Windows build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - cursor/solidcraft-agent-v1-9837
+    paths:
+      - "apps/solidcraft-agent/**"
+      - ".github/workflows/solidcraft-agent-windows.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build-installer:
+    name: Build Setup-rN.exe
+    runs-on: windows-latest
+    # Avoid infinite loop when the job commits the revision bump.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && !contains(github.event.head_commit.message, 'chore(solidcraft-agent): bump revision'))
+    defaults:
+      run:
+        working-directory: apps/solidcraft-agent
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          # Pin 8.x: SDK 10 lacks AppxPackage ExpandPriContent used by WindowsAppSDK PRI gen.
+          dotnet-version: "8.0.404"
+          global-json-file: apps/solidcraft-agent/global.json
+
+      - name: Verify .NET SDK
+        shell: pwsh
+        run: |
+          dotnet --info
+          $sdk = (dotnet --version)
+          if (-not $sdk.StartsWith("8.")) { throw "Expected .NET 8 SDK, got $sdk" }
+
+      - name: Setup MSBuild (VS AppxPackage / PRI tasks)
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Bump revision
+        id: version
+        shell: pwsh
+        run: |
+          $path = "version.json"
+          $v = Get-Content $path -Raw | ConvertFrom-Json
+          $v.revision = [int]$v.revision + 1
+          $json = $v | ConvertTo-Json -Depth 5
+          [System.IO.File]::WriteAllText((Resolve-Path $path), $json + "`n")
+          $ver = "$($v.major).$($v.minor).$($v.revision)"
+          $rev = [string]$v.revision
+          "version=$ver" >> $env:GITHUB_OUTPUT
+          "revision=$rev" >> $env:GITHUB_OUTPUT
+          "zip=SolidCraftAgent-r$rev-win-x64.zip" >> $env:GITHUB_OUTPUT
+          "setup=SolidCraftAgent-Setup-r$rev.exe" >> $env:GITHUB_OUTPUT
+          Write-Host "Building SolidCraft Agent $ver (r$rev)"
+
+      - name: Publish self-contained win-x64
+        shell: pwsh
+        run: |
+          $ver = "${{ steps.version.outputs.version }}"
+          $rev = "${{ steps.version.outputs.revision }}"
+          New-Item -ItemType Directory -Force -Path dist/publish, dist/logs | Out-Null
+          $log = "dist/logs/publish.log"
+          # Use VS MSBuild so ExpandPriContent / AppxPackage tasks resolve (missing from bare dotnet SDK).
+          msbuild src/SolidCraftAgent.App/SolidCraftAgent.App.csproj `
+            /restore `
+            /t:Publish `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:RuntimeIdentifier=win-x64 `
+            /p:SelfContained=true `
+            /p:PublishDir="$PWD\dist\publish\\" `
+            /p:WindowsPackageType=None `
+            /p:WindowsAppSDKSelfContained=true `
+            /p:Version=$ver `
+            /p:AssemblyVersion="$ver.0" `
+            /p:FileVersion="$ver.0" `
+            /p:InformationalVersion="$ver+r$rev" `
+            /v:m `
+            *>&1 | Tee-Object -FilePath $log
+          if ($LASTEXITCODE -ne 0) {
+            Get-Content $log | Select-String -Pattern "error|Error|error CS|MSB" | ForEach-Object { "::error::$($_.Line)" }
+            throw "msbuild publish failed ($LASTEXITCODE). See dist/logs/publish.log"
+          }
+          if (-not (Test-Path "dist/publish/SolidCraftAgent.exe")) {
+            if (Test-Path "dist/publish/SolidCraftAgent.App.exe") {
+              Copy-Item "dist/publish/SolidCraftAgent.App.exe" "dist/publish/SolidCraftAgent.exe"
+            } else {
+              Get-ChildItem dist/publish -Filter *.exe -ErrorAction SilentlyContinue | Select-Object -First 20 | ForEach-Object { $_.FullName }
+              throw "Published exe not found"
+            }
+          }
+
+      - name: Upload publish log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish-log
+          path: apps/solidcraft-agent/dist/logs/publish.log
+          if-no-files-found: ignore
+
+      - name: Zip portable build
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "dist/publish/*" -DestinationPath "dist/${{ steps.version.outputs.zip }}" -Force
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --no-progress -y
+
+      - name: Build installer exe
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { throw "ISCC not found at $iscc" }
+          & $iscc packaging/SolidCraftAgent.iss `
+            "/DAppVersion=${{ steps.version.outputs.version }}" `
+            "/DAppRevision=${{ steps.version.outputs.revision }}" `
+            "/DSourceDir=$PWD\dist\publish" `
+            "/DOutDir=$PWD\dist"
+          if (-not (Test-Path "dist/${{ steps.version.outputs.setup }}")) {
+            throw "Installer missing: dist/${{ steps.version.outputs.setup }}"
+          }
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.version.outputs.setup }}
+          path: |
+            apps/solidcraft-agent/dist/${{ steps.version.outputs.setup }}
+            apps/solidcraft-agent/dist/${{ steps.version.outputs.zip }}
+          if-no-files-found: error
+
+      - name: Commit revision bump
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add version.json
+          $changed = @(git diff --cached --name-only)
+          if ($changed.Count -eq 0) {
+            Write-Host "No version.json change to commit"
+            exit 0
+          }
+          git commit -m "chore(solidcraft-agent): bump revision to r${{ steps.version.outputs.revision }}"
+          git pull --rebase origin "${{ github.ref_name }}"
+          git push origin "HEAD:${{ github.ref_name }}"

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "thickness-reverse",
+    "title": "Thickness reverse (-9 pattern)",
+    "trigger": "Part has distinct rib thickness and eye-end thickness, or user reports features extruded in reverse.",
+    "checks": [
+      "Confirm rib thickness and end thickness separately against the drawing labels.",
+      "If reversed: rebuild as blank at rib thickness and pocket ends to end thickness."
+    ]
+  },
+  {
+    "id": "bevel-50x60",
+    "title": "Bevel W × A° math (C32057-51 pattern)",
+    "trigger": "Compound bevel callout of the form W × A° on a plate of thickness T.",
+    "formula": {
+      "width": "W",
+      "depth": "W * tan(A_degrees)",
+      "flat": "T - depth",
+      "rejectFullThicknessWidth": "T / tan(A_degrees)"
+    },
+    "example": {
+      "W": 0.5,
+      "A_degrees": 60,
+      "T": 1.0,
+      "depth": 0.8660254037844386,
+      "flat": 0.1339745962155614,
+      "rejectWidth": 0.5773502691896257
+    },
+    "checks": [
+      "Measured bevel width must match W, not T/tan(A).",
+      "Verify both mirrored bevels from the built model.",
+      "Confirm sketch origins so left and right sides match."
+    ]
+  },
+  {
+    "id": "mirrored-features",
+    "title": "Verify mirrored features both sides",
+    "trigger": "Any symmetric or mirrored geometry (bevels, hole columns, flanges).",
+    "checks": [
+      "Measure both sides from the built model.",
+      "Do not trust a single-side sketch origin."
+    ]
+  },
+  {
+    "id": "units-mm",
+    "title": "Units mm after new_design",
+    "trigger": "Every new design.",
+    "checks": [
+      "Call document.units with units=mm immediately after new_design."
+    ]
+  }
+]

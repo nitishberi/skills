@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="SolidCraftAgent.App.Views.SessionPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid Padding="16" RowSpacing="12" ColumnSpacing="12">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="2*" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8">
+      <TextBlock Text="Session" Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center" />
+      <Button Content="Attach drawing" Click="AttachDrawing_Click" />
+      <Button Content="Preflight" Click="Preflight_Click" />
+      <TextBlock x:Name="StatusText" VerticalAlignment="Center" Opacity="0.7" />
+    </StackPanel>
+
+    <Grid Grid.Row="1" Grid.Column="0" RowSpacing="8">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <ScrollViewer>
+        <ItemsControl x:Name="ChatList" />
+      </ScrollViewer>
+      <Grid Grid.Row="1" ColumnSpacing="8">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="PromptBox" AcceptsReturn="True" TextWrapping="Wrap" Height="88"
+                 PlaceholderText="Describe the part or paste a correction..." />
+        <Button Grid.Column="1" Content="Send" VerticalAlignment="Stretch" Click="Send_Click" />
+      </Grid>
+    </Grid>
+
+    <Grid Grid.Row="1" Grid.Column="1" RowSpacing="8">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <TextBlock Text="Tool / step log" Style="{StaticResource SubtitleTextBlockStyle}" />
+      <ListView x:Name="StepList" Grid.Row="1" />
+      <StackPanel Grid.Row="2" Spacing="4">
+        <TextBlock x:Name="DrawingsText" TextWrapping="Wrap" />
+        <HyperlinkButton x:Name="OpenModelLink" Content="Open saved model folder" Click="OpenModel_Click" />
+      </StackPanel>
+    </Grid>
+  </Grid>
+</Page>

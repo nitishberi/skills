@@ -1,0 +1,14 @@
+{
+  "solution": {
+    "path": "SolidCraftAgent.sln",
+    "projects": [
+      "src/SolidCraftAgent.Core/SolidCraftAgent.Core.csproj",
+      "src/SolidCraftAgent.Llm/SolidCraftAgent.Llm.csproj",
+      "src/SolidCraftAgent.Mcp/SolidCraftAgent.Mcp.csproj",
+      "src/SolidCraftAgent.Secrets/SolidCraftAgent.Secrets.csproj",
+      "tests/SolidCraftAgent.Core.Tests/SolidCraftAgent.Core.Tests.csproj",
+      "tests/SolidCraftAgent.Mcp.Tests/SolidCraftAgent.Mcp.Tests.csproj",
+      "tests/SolidCraftAgent.Lessons.Tests/SolidCraftAgent.Lessons.Tests.csproj"
+    ]
+  }
+}
